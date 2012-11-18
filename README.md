@@ -1,0 +1,1 @@
+YouTube Video preview is for now an extension for Google Chrome - https://chrome.google.com/webstore/detail/youtube-video-preview/hmggjocpafbpjdhoknaneokaklekakeh
