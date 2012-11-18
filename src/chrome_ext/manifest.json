@@ -1,0 +1,31 @@
+{
+    "description": "Mouse hover one youtube video thumbnail to see more images for video",
+    "icons": {
+        "128": "ytpreview128.png",
+        "48": "ytpreview48.png",
+        "16": "ytpreview16.png"
+    },
+    "background": {
+        "scripts": [ "js/ytConst.js", "js/ytSettings.js", "js/background.js" ]
+    },
+    "content_scripts": [
+        {
+            "js": [ "js/ytConst.js", "js/dyDomHelper.js", "js/ytVideoPreview.js" ],
+            "matches": [ "http://www.youtube.com/*", "https://www.youtube.com/*" ],
+            "run_at": "document_end"
+        }
+    ],
+    "page_action": {
+        "matches": [ "http://www.youtube.com/*", "https://www.youtube.com/*" ],
+        "default_icon": "ytpreview16.png",
+        "default_title": "Youtube video preview - settings",
+        "default_popup": "popup.html"
+    },
+    "options_page": "site.html",
+    "name": "Youtube video preview",
+    "permissions": ["tabs", "unlimitedStorage", "http://gdata.youtube.com/*" ],
+    "default_locale": "en",
+    "version": "2.0.0",
+    "manifest_version": 2,
+    "minimum_chrome_version": "20"
+}

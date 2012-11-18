@@ -1,0 +1,30 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="css/ytPopup.css">	
+	</head>
+	<body>
+		<div id="popupMain" class="menu">
+			<div id="ytPreviewOptions" class="options">Options...</div>		
+			<div id="ytPreviewHideIcon" class="options">Hide icon</div>		
+		</div>
+        <div id="removePageAction" hidden>
+            <span>YouTube Video Preview will continue to work, only the icon will be removed from the address bar</span>
+            <div class="hideIconOptions">
+                <span class="areYouSureQuestion">Are you sure?</span>
+                <input id="hideIconOptionsYes" type="button" class="hideIconOptionsButton" value="Yes">
+                <input id="hideIconOptionsNo" type="button" class="hideIconOptionsButton" value="No" onclick="window.close()">
+            </div>
+            <div class="hideIconMore">
+                <input id="hideIconConfirmCheckbox" type="checkbox" class="hideIconConfirmCheckbox" >
+                <label for="hideIconConfirmCheckbox" class="hideIconConfirmLabel">Do not ask next time</label>
+                <div class="hideIconOptionsInfo">
+                    <span>To show the icon again go to:</span><br>
+                    <span class="hideIconOptionsInfoPath">Tools > Extensions > Youtube video preview > Options</span>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="js/ytConst.js"></script>
+        <script type="text/javascript" src="js/ytSettings.js"></script>
+        <script type="text/javascript" src="js/popup.js"></script>
+	</body>
+</html>

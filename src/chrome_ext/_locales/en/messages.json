@@ -1,0 +1,32 @@
+{
+	"about": {
+		"message": "about"
+	},
+	"options": {
+		"message": "options"
+	},
+	"settings": {
+		"message": "settings"
+	},
+	"feedback": {
+		"message": "feedback"
+	},
+	"imageTimeLabel": {
+		"message": "Rotate speed:"
+	},
+	"imageTimeDescription": {
+		"message": "milliseconds (1000 milliseconds = 1 second)"
+	},
+	"enableRatingViewLabel": {
+		"message": "Rating preview:"
+	},
+	"enableRatingViewTrue": {
+		"message": "enable"
+	},
+	"enableRatingViewFalse": {
+		"message": "disable"
+	},
+	"dummy": {
+		"message": "dummy"
+	}
+}

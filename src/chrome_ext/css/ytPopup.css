@@ -1,0 +1,70 @@
+body {
+	padding: 0;
+	margin: 0;
+	font-family:arial;
+	font-size:12px;
+	color:#2a2e41;
+	width:200px;
+}
+.menu {
+	padding: 0;
+	margin: 0;
+	cursor : default;
+}
+
+.options:hover {
+	background-color:#dbddef;
+	text-decoration: underline;
+}
+.options {
+	-webkit-border-radius:4px;
+	-webkit-transition-property: padding-left;
+	-webkit-transition-duration: 0.4s;
+	transition-timing-function : linear;
+	padding:3px 3px 3px 4px;
+	cursor:pointer;
+	border:1px solid #e4e4e4;
+	margin-bottom:3px;
+}
+#removePageAction {
+    float: left;
+	margin: 10px;
+}
+.hideIconOptions {
+	float: left;
+	margin-top: 6px;
+}
+.areYouSureQuestion {
+	color: #d71338;
+	padding: 6px 10px 0 5px;
+}
+.hideIconOptionsButton {
+	height: 20px;
+	font-size: 12px;
+	vertical-align: middle;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+.hideIconMore {
+	float: left;
+	margin: 6px 0 0;
+}
+.hideIconAskCheckbox {
+	float: left;
+	height: 20px;
+	margin:0 7px 0;
+	font-size: 12px;
+	vertical-align: middle;
+}
+.hideIconAskLabel {
+	float: left;
+	margin-top: 2px;
+}
+.hideIconOptionsInfo {
+	float:left;
+	margin-top:5px;
+}
+.hideIconOptionsInfoPath {
+	color: #00f;
+}

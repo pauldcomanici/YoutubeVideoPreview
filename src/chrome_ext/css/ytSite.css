@@ -1,0 +1,133 @@
+/* GENERAL */
+* {
+	margin: 0px;
+	padding: 0px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+html {
+	text-align: center;
+}
+body {
+	color:#2a2e41;
+	text-align: center;
+	background: white;
+	font-size: 12px;
+	line-height: 1.4em;
+}
+ol li, ul li {
+	margin: 0 0 0 40px;
+}
+.gray {
+	color: #928E8E;
+}
+.clear {
+	clear:both;
+}
+.spacer {
+	line-height: 0px;
+	font-size: 0px;
+	float: left;
+	width: 1px;
+	height: 1px;
+}
+hr {
+	background: #E2E2E2;
+	height: 1px;
+}
+a {
+	text-decoration: none;
+	color: #18A1CD;
+}
+a:hover {
+	text-decoration: underline;
+}
+/* TOP */
+.topBarMargin {
+	width: 100%;
+	height: 3px;
+	background: #15A3D2;
+}
+.topBarCenter {
+	width: 1000px;
+	background: #999;
+	height: 3px;
+	text-align: center;
+	margin: auto;
+}
+.pageHeader {
+	float: left;
+	margin: 5px 0 10px;
+}
+.headerTitle, .headerTitleSection {
+	font-family: Garamond;
+	font-style: italic;
+	font-weight: bold;
+	font-size: 30pt;
+	line-height: 40pt;
+	display: inline;
+}
+.headerTitleSection {
+	color: #18A1CD;
+}
+.pageNavigation {
+	float: right;
+	margin: 20px 0 0;
+}
+.pageNavigation ul {
+	float: right;
+	list-style-type: none;
+}
+.pageNavigation li {
+	float: right;
+	margin: 0 5px;
+}
+.pageNavigation li a {
+	color: #999;
+	background: #FFF;
+	font-weight: bold;
+	font-size: 14px;
+	line-height: 1.4em;
+	font-family: Helvetica;
+	text-align: center;
+	padding: 2px 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	border: 1px solid #FFF;
+}
+.pageNavigation li a.selected {
+	color: white;
+	background: #18A1CD;
+	border: 1px solid #18A1CD;
+}
+.pageNavigation li a:hover {
+	color: #6EDAFE;
+	background: #FFF;
+	border: 1px solid #E2E2E2;
+	text-decoration: none;
+}
+/* CONTENT */
+.container {
+	text-align: left;
+	width: 1000px;
+	margin: 0 auto;
+}
+.site_pages {
+	-webkit-transition: all .5s ease-in-out;
+	-moz-transition: all .5s ease-in-out;
+}
+.site_pages p {
+	text-indent: 20px;
+}
+/* FOOTER */
+footer {
+	position: fixed;
+	bottom: 10px;
+	left: 0;
+	width: 100%;
+	background-color: rgba(255, 255, 255, 0.5);
+}
+footer .footerInfo {
+	position: relative;
+	text-align: center;
+}

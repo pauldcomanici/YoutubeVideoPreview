@@ -1,0 +1,31 @@
+.option {
+	padding: 3px 5px 3px 5px;
+	margin-bottom:3px;
+	float:left;
+	width: 990px;
+	-webkit-border-radius:4px;
+	border-radius:4px;
+	border: 1px solid #e4e4e4;
+}
+.inputRange {
+	cursor: pointer;
+	margin: 0;
+	height: 20px;
+}
+.optionCol {
+	width: 20%;
+	float: left;
+}
+.optionColDesc {
+	width: 40%;
+}
+.optionLabel {
+	margin: 0 10px 0 0;
+	min-width: 130px;
+	line-height: 20px;
+	cursor: pointer;
+}
+.optionData {
+	margin: 0 10px 0 5px;
+	min-width: 130px;
+}

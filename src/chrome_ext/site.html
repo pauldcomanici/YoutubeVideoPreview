@@ -1,0 +1,117 @@
+<html>
+	<head>
+		<title>YouTube Video Preview</title>
+		<link rel="stylesheet" type="text/css" href="css/ytSite.css">
+		<link rel="stylesheet" type="text/css" href="css/ytOptions.css">
+	</head>
+	<body>
+		<div class="topBarMargin">
+			<div class="topBarCenter"></div>
+		</div>
+		<div class="container">
+			<header class="pageHeader" id="pageHeader">
+				<hgroup>
+					<h1 class="headerTitle">YouTube Video Preview -&nbsp;</h1>
+					<h2 class="headerTitleSection">...</h2>
+				</hgroup>
+				<div class="clear"></div>
+			</header>
+			<nav class="pageNavigation" id="pageNavigation">
+				<ul>
+					<li><a id="page_feedback"href="#feedback">Feedback</a></li>
+					<li><a id="page_options" href="#options">Options</a></li>
+					<li><a id="page_about" href="#about">About</a></li>
+				</ul>
+			</nav>
+			<div class="clear"></div>
+			<hr>
+			<div class="clear"></div>
+			<div class="spacer" style="height:10px;"></div>
+			<div class="clear"></div>
+			<section id="page_options_" class="site_pages" hidden>
+				<div class="option">
+					<span class="optionCol"><label for="imageTime" id="imageTimeLabel" class="optionLabel">Rotate speed:</label></span>
+					<span class="optionCol"><input id="imageTime" type="range" class="inputRange optionData" min="0" max="10" step="1" value="10"></span>
+					<span class="optionCol optionColDesc"><span id="imageTimeValue">1000</span><span>&nbsp;</span><span id="imageTimeUnit">milliseconds (1000 milliseconds = 1 second)</span></span>
+				</div>
+				<div class="clear"></div>
+				<div class="option">
+					<span class="optionCol"><label for="enableRatingView" id="enableRatingViewLabel" class="optionLabel">Rating preview:</label></span>
+					<span class="optionCol"><select id="enableRatingView" class="optionData">
+						<option id="enableRatingViewTrue" value="true">enable</option>
+						<option id="enableRatingViewFalse" value="false">disable</option>
+					</select></span>
+					<span class="optionCol optionColDesc"></span>
+				</div>
+				<div class="clear"></div>
+				<div class="option">
+					<span class="optionCol"><label for="showIconFlag" id="showIconFlagLabel" class="optionLabel">Show icon:</label></span>
+					<span class="optionCol"><select id="showIconFlag" class="optionData">
+						<option id="showIconFlagYes" value="true">yes</option>
+						<option id="showIconFlagNo" value="false">no</option>
+					</select></span>
+					<span class="optionCol optionColDesc"></span>
+				</div>
+				<div class="clear"></div>
+				<div class="option">
+					<span class="optionCol"><label for="hideIconConfirmFlag" id="hideIconConfirmFlagLabel" class="optionLabel">Confirm at hide icon:</label></span>
+					<span class="optionCol"><select id="hideIconConfirmFlag" class="optionData">
+						<option id="hideIconConfirmFlagFalse" value="true">yes</option>
+						<option id="hideIconConfirmFlagTrue" value="false">no</option>
+					</select></span>
+					<span class="optionCol optionColDesc"></span>
+				</div>
+				<div class="clear"></div>
+				<p class="gray">Everything is automatically saved at change</p>
+			</section>
+			<section id="page_about_" class="site_pages" hidden>
+			<p><b>Youtube&trade; Video Preview helps you decide whether it is worth watching a video before clicking it.</b></p>
+			<br>
+			<br>
+			<p><i>It works using:</i></p>
+			<ol>
+				<li>
+					<a href="http://www.youtube.com/" target="_blank">http://www.youtube.com/</a> (non secure protocol)
+				</li>
+				<li>
+					<a href="https://www.youtube.com/" target="_blank">https://www.youtube.com/</a> (secure protocol)
+				</li>
+			</ol>
+			<br>
+			<p><i>Features:</i></p>
+			<ul>
+				<li>
+					Mouseover a thumbnail at youtube.com and you will see other thumbnails from that video, by this you can determine if the content is what you are interested in.
+				</li>
+				<li>
+			 		Below each video you can see rating statistics, this will help you to check if the video is worth watching.
+				</li>
+				<li>
+			 		Works on Google Chrome minimum version 18.
+				</li>
+				<li>
+			 		Options to change image rotating time and option to enable/disable rating preview.
+				</li>
+			</ul>
+			</section>
+			<section id="page_feedback_" class="site_pages" hidden>
+			<p>Do you have a question?</p>
+			<br>
+			<p>Have you found a issue?</p>
+			<br>
+			<p>Do you have any suggestion?</p>
+			<br>
+			Please don't hesitate to contact me at <a href="mailto:darkyndy@gmail.com">darkyndy@gmail.com</a>
+			</section>
+			<footer>
+				<div class="footerInfo">Copyright &copy;2012 All rights reserved to <a href="http://www.darkyndy.com">darkyndy</a></div>
+			</footer>
+		</div>
+		<script type="text/javascript" src="js/ytConst.js"></script>
+		<script type="text/javascript" src="js/dyDomHelper.js"></script>
+		<script type="text/javascript" src="js/ytSettings.js"></script>
+		<script type="text/javascript" src="js/ytTranslate.js"></script>
+		<script type="text/javascript" src="js/ytSite.js"></script>
+		<script type="text/javascript" src="js/ytOptions.js"></script>
+	</body>
+</html>
