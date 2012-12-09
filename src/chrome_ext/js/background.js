@@ -178,7 +178,7 @@
 		 * @param {Number} tabId
 		 */
 		messageActionPageForUpdate: function (proprName, newValue, tabId) {
-			chrome.tabs.sendMessage(tabId, {proprName: proprName, newValue: newValue});
+			chrome.tabs.sendMessage(tabId, {message: "updateSettings", response: {proprName: proprName, newValue: newValue}});
 		},
 		/**
 		 * 

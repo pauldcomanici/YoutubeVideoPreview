@@ -544,24 +544,27 @@
 		 * @param sender
 		 * @param {Function} sendResponse
 		 */
-		onRequest: function onRequest(request, sender, sendResponse) {
+		onRequest: function onRequest(request) {
 			var proprName,
-				newValue;
+				newValue,
+				response;
 			if (typeof request === "object") {
-				newValue = request.newValue;
-				proprName = request.proprName;
-				if (proprName === PROPR_VIEW_RATING) {
-					if (newValue === false || newValue === "false") {
-						newValue = false;
-					} else {
-						newValue = true;
+				if (request.message === "updateSettings") {
+					response = request.response;
+					newValue = response.newValue;
+					proprName = response.proprName;
+					if (proprName === PROPR_VIEW_RATING) {
+						if (newValue === false || newValue === "false") {
+							newValue = false;
+						} else {
+							newValue = true;
+						}
+					} else if (proprName === PROPR_IMAGE_TIME) {
+						newValue = parseInt(newValue, 10);
 					}
-				} else if (proprName === PROPR_IMAGE_TIME) {
-					newValue = parseInt(newValue, 10);
+					my.settings[proprName] = newValue;
 				}
-				my.settings[proprName] = newValue;
 			}
-			//sendResponse({});
 		},
 		/**
 		 * 
