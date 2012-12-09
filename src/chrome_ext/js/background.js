@@ -2,12 +2,28 @@
  * 
  * @description Logic for background page
  */
-var YtBackground = (function () {
+(function () {
 	"use strict";
-	/*global chrome, window, CustomEvent, YtSettings, YtProprImageTime, YtProprShowIcon, YtProprHideIconConfirm, YtProprViewRating */
-	var my,
-		publicMethods;
+	/*global chrome, window, CustomEvent, YtSettings, PROPR_IMAGE_TIME, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM, PROPR_VIEW_RATING */
+	var my;
 	my = {
+		/**
+		 * 
+		 * @description Run content script on provided tab
+		 * @param {Number} tabId
+		 */
+		runContentScript: function runContentScript(tabId) {
+			var contentScripts = chrome.app.getDetails().content_scripts,
+				contentScriptsLength,
+				i;
+			if (contentScripts && contentScripts[0] && contentScripts[0].js) {
+				contentScripts = contentScripts[0].js;
+				contentScriptsLength = contentScripts.length;
+				for (i = 0; i < contentScriptsLength; i = i + 1) {
+					chrome.tabs.executeScript(tabId, {file: contentScripts[i]});
+				}
+			}
+		},
 		/**
 		 * 
 		 * @description Toggle extension icon from location
@@ -28,8 +44,9 @@ var YtBackground = (function () {
 		 *              and we need to do changes on all tabs where YouTube is open
 		 * @param {String} callMethod
 		 * @param {Array} callParams
+		 * @param {Boolean} runContentScript
 		 */
-		updateAllYoutubeTabs: function (callMethod, callParams) {
+		updateAllYoutubeTabs: function (callMethod, callParams, runContentScript) {
 			chrome.windows.getAll({populate: true}, function (windows) {
 				var windowsLength,
 					windowIndex,
@@ -37,6 +54,7 @@ var YtBackground = (function () {
 					tabs,
 					tabsLength,
 					tabUrl;
+				runContentScript = runContentScript || false;
 				windowsLength = windows.length;
 				for (windowIndex = 0; windowIndex < windowsLength; windowIndex = windowIndex + 1) {
 					tabs = windows[windowIndex].tabs;
@@ -48,6 +66,9 @@ var YtBackground = (function () {
 							callParams.push(tabs[tabIndex].id);
 							my[callMethod].apply(null, callParams);
 							callParams.pop(); //remove tabId that was previously added
+							if (runContentScript) {
+								my.runContentScript(tabs[tabIndex].id);
+							}
 						}
 					}
 				}
@@ -87,13 +108,13 @@ var YtBackground = (function () {
 				if (request === "openOptions") {
 					my.openOptions();
 				} else if (request === "getImageRotateTime") {
-					rotateTime = YtSettings.getPropr(YtProprImageTime);
+					rotateTime = YtSettings.getPropr(PROPR_IMAGE_TIME);
 					sendResponse({rotateTime: rotateTime});
 				} else if (request === "getSettings") {
 					settings = YtSettings.getSettings();
 					sendResponse({settings: settings});
 				} else if (request === "showAction") {
-					showIconFlag = YtSettings.getPropr(YtProprShowIcon);
+					showIconFlag = YtSettings.getPropr(PROPR_SHOW_ICON);
 					if (showIconFlag) {
 						// Show the page action
 						chrome.pageAction.show(sender.tab.id);
@@ -133,7 +154,7 @@ var YtBackground = (function () {
 				extensionViewsLength,
 				i,
 				isOptionPage;
-			extensionViews = chrome.extension.getViews();
+			extensionViews = chrome.extension.getViews(); //get all views
 			extensionViewsLength = extensionViews.length;
 			for (i = 0; i < extensionViewsLength; i = i + 1) {
 				extensionView = extensionViews[i];
@@ -173,7 +194,7 @@ var YtBackground = (function () {
 			eventForActionPage = false;
 			changeOn = evt.key;
 			newValue = evt.newValue;
-			if (changeOn === YtProprShowIcon) {
+			if (changeOn === PROPR_SHOW_ICON) {
 				if (newValue === "false") {
 					newValue = false;
 				} else {
@@ -182,11 +203,11 @@ var YtBackground = (function () {
 				my.updateAllYoutubeTabs("toggleIcon", [newValue]);
 				//my.onShowIconUpdate(newValue);
 				eventForOptionsPage = "updateShowIcon";
-			} else if (changeOn === YtProprHideIconConfirm) {
+			} else if (changeOn === PROPR_HIDE_ICON_CONFIRM) {
 				eventForOptionsPage = "updateHideIconConfirm";
-			} else if (changeOn === YtProprImageTime) {
+			} else if (changeOn === PROPR_IMAGE_TIME) {
 				eventForActionPage = true;
-			} else if (changeOn === YtProprViewRating) {
+			} else if (changeOn === PROPR_VIEW_RATING) {
 				eventForActionPage = true;
 			}
 			if (eventForOptionsPage) {
@@ -209,11 +230,12 @@ var YtBackground = (function () {
 			window.addEventListener("storage", my.storageHandler, false);
 			//Listen for the content script to send a message to the background page.
 			chrome.extension.onMessage.addListener(my.onRequest);
-//			chrome.extension.onConnect.addListener(function(port) {
-//				port.onMessage.addListener(function (msg) {
-//					//port.postMessage({counter: msg.counter+1});
-//				});
-//			});
+			//listener for extension install/update
+			chrome.runtime.onInstalled.addListener(function(details) {
+				var iconVisible;
+				iconVisible = YtSettings.getPropr(PROPR_SHOW_ICON);
+				my.updateAllYoutubeTabs("toggleIcon", [iconVisible], true);
+			});
 		},
 		/**
 		 * @description Initialize background page
@@ -222,10 +244,5 @@ var YtBackground = (function () {
 			my.delegate();
 		}
 	};
-	publicMethods = {
-		openOptions: my.openOptions,
-		onRequest: my.onRequest
-	};
 	my.init();
-	return publicMethods;
 }());

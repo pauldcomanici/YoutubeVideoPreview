@@ -3,7 +3,7 @@
  */
 (function () {
 	"use strict";
-	/*global window, document, setTimeout, DyDomHelper, XMLHttpRequest, ActiveXObject, chrome, YtProprViewRating, YtProprImageTime */
+	/*global window, document, setTimeout, DyDomHelper, XMLHttpRequest, ActiveXObject, chrome, PROPR_VIEW_RATING, PROPR_IMAGE_TIME */
 	var my,
 		publicMethods;
 	my = {
@@ -335,7 +335,7 @@
 				DyDomHelper.setCss(imgEl, setCss);
 			}
 			imgEl.dataset.ytImg = imgId;
-			my.hoverTimer = setTimeout(function () { my.switchVideoImg(imgEl); }, my.settings[YtProprImageTime]);
+			my.hoverTimer = setTimeout(function () { my.switchVideoImg(imgEl); }, my.settings[PROPR_IMAGE_TIME]);
 		},
 		/**
 		 * 
@@ -445,7 +445,7 @@
 			//console.log('hover in');
 			videoImgEl = this.querySelector("img");
 			my.initVideoSettings("in", videoImgEl);
-			if (my.settings[YtProprViewRating]) {
+			if (my.settings[PROPR_VIEW_RATING]) {
 				videoParentEl = this.parentNode.parentNode;
 				my.testVideoForRating(videoParentEl);
 			}
@@ -486,13 +486,18 @@
 					DyDomHelper.addClass(videoEl, my.knownAddedCssClass);
 					videoEl.addEventListener("mouseover", my.mouseEnterVideo, false);
 					videoEl.addEventListener("mouseout", my.mouseExitVideo, false);
-					if (my.settings[YtProprViewRating]) {
+					if (my.settings[PROPR_VIEW_RATING]) {
 						videoParentEl = videoEl.parentNode.parentNode;
 						my.testVideoForRating(videoParentEl);
 					}
 				}
 			}
 		},
+		/**
+		 * 
+		 * @description Test for new video inserted in page
+		 * @param {Event} evt
+		 */
 		testForNewVideo: function testForNewVideo(evt) {
 			var nodeName,
 				el,
@@ -545,13 +550,13 @@
 			if (typeof request === "object") {
 				newValue = request.newValue;
 				proprName = request.proprName;
-				if (proprName === YtProprViewRating) {
+				if (proprName === PROPR_VIEW_RATING) {
 					if (newValue === false || newValue === "false") {
 						newValue = false;
 					} else {
 						newValue = true;
 					}
-				} else if (proprName === YtProprImageTime) {
+				} else if (proprName === PROPR_IMAGE_TIME) {
 					newValue = parseInt(newValue, 10);
 				}
 				my.settings[proprName] = newValue;

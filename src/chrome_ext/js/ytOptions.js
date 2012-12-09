@@ -3,7 +3,7 @@
  */
 (function () {
     "use strict";
-	/*global window, document, chrome, DyDomHelper, YtSettings, YtProprImageTime, YtProprViewRating, YtProprShowIcon, YtProprHideIconConfirm */
+	/*global window, document, chrome, DyDomHelper, YtSettings, PROPR_IMAGE_TIME, PROPR_VIEW_RATING, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM */
     var my = {
 		/**
 		 * 
@@ -22,7 +22,7 @@
 			var initTime,
 				newTime;
 			initTime = parseInt(this.value, 10);
-			newTime = YtSettings.setPropr(YtProprImageTime, initTime);
+			newTime = YtSettings.setPropr(PROPR_IMAGE_TIME, initTime);
 			my.updateTimeValue(newTime);
 		},
 		/**
@@ -40,7 +40,7 @@
 				"step": 100
 			};
 			DyDomHelper.setAttr(inputRangeEl, inputRangeAttr);
-			imageTime = YtSettings.getPropr(YtProprImageTime);
+			imageTime = YtSettings.getPropr(PROPR_IMAGE_TIME);
 			inputRangeEl.value = imageTime;
 			inputRangeEl.addEventListener("change", my.onChangeRotateTime, false);
 			my.updateTimeValue(imageTime);
@@ -50,7 +50,7 @@
 		 * @description Function executed when view rating is changed
 		 */
 		onChangeViewRating: function onChangeViewRating() {
-			YtSettings.setPropr(YtProprViewRating, this.value);
+			YtSettings.setPropr(PROPR_VIEW_RATING, this.value);
 		},
 		/**
 		 * 
@@ -59,7 +59,7 @@
 		setupViewRating: function setupViewRating() {
 			var viewRatingEl;
 			viewRatingEl = document.getElementById("enableRatingView");
-			viewRatingEl.value = YtSettings.getPropr(YtProprViewRating);
+			viewRatingEl.value = YtSettings.getPropr(PROPR_VIEW_RATING);
 			viewRatingEl.addEventListener("change", my.onChangeViewRating, false);
 		},
 		/**
@@ -87,7 +87,7 @@
 		 * @description Function executed when show icon flag is changed
 		 */
 		onChangeShowIcon: function onChangeShowIcon() {
-			YtSettings.setPropr(YtProprShowIcon, this.value);
+			YtSettings.setPropr(PROPR_SHOW_ICON, this.value);
 		},
 		/**
 		 * 
@@ -96,7 +96,7 @@
 		setupShowIcon: function setupShowIcon() {
 			var showIconEl;
 			showIconEl = my.getShowIconEl();
-			showIconEl.value = YtSettings.getPropr(YtProprShowIcon).toString();
+			showIconEl.value = YtSettings.getPropr(PROPR_SHOW_ICON).toString();
 			showIconEl.addEventListener("change", my.onChangeShowIcon, false);
 		},
 		/**
@@ -123,7 +123,7 @@
 		 * @description Function executed when show icon flag is changed
 		 */
 		onChangeHideIconConfirm: function onChangeHideIconConfirm() {
-			YtSettings.setPropr(YtProprHideIconConfirm, this.value);
+			YtSettings.setPropr(PROPR_HIDE_ICON_CONFIRM, this.value);
 		},
 		/**
 		 * @description Setup select for ask before hiding icon flag
@@ -131,7 +131,7 @@
 		setupHideIconConfirm: function setupHideIconConfirm() {
 			var hideIconConfirmEl;
 			hideIconConfirmEl = my.getHideIconConfirmEl();
-			hideIconConfirmEl.value = YtSettings.getPropr(YtProprHideIconConfirm).toString();
+			hideIconConfirmEl.value = YtSettings.getPropr(PROPR_HIDE_ICON_CONFIRM).toString();
 			hideIconConfirmEl.addEventListener("change", my.onChangeHideIconConfirm, false);
 		},
 		/**

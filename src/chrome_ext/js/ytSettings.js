@@ -3,7 +3,7 @@
  */
 var YtSettings = (function () {
 	"use strict";
-	/*global localStorage, YtProprImageTime, YtProprShowIcon, YtProprHideIconConfirm, YtProprViewRating */
+	/*global localStorage, PROPR_IMAGE_TIME, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM, PROPR_VIEW_RATING */
 	var my,
 		publicMethods;
 	my = {
@@ -39,12 +39,12 @@ var YtSettings = (function () {
 				intPropr,
 				proprNameIndex;
 			if (proprName) {
-				boolPropr = [YtProprViewRating, YtProprShowIcon, YtProprHideIconConfirm];
+				boolPropr = [PROPR_VIEW_RATING, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM];
 				proprNameIndex = boolPropr.indexOf(proprName);
 				if (proprNameIndex > -1) {
 					proprVal = my.filterBool(proprVal);
 				} else {
-					intPropr = [YtProprImageTime];
+					intPropr = [PROPR_IMAGE_TIME];
 					proprNameIndex = intPropr.indexOf(proprName);
 					if (proprNameIndex > -1) {
 						proprVal = parseInt(proprVal, 10);
@@ -105,10 +105,10 @@ var YtSettings = (function () {
 		 */
 		init: function () {
 			var proprName;
-			my.propr[YtProprImageTime] = 1000;
-			my.propr[YtProprViewRating] = true;
-			my.propr[YtProprShowIcon] = true;
-			my.propr[YtProprHideIconConfirm] = true;
+			my.propr[PROPR_IMAGE_TIME] = 1000;
+			my.propr[PROPR_VIEW_RATING] = true;
+			my.propr[PROPR_SHOW_ICON] = true;
+			my.propr[PROPR_HIDE_ICON_CONFIRM] = true;
 			for (proprName in my.propr) {
 				if (my.propr.hasOwnProperty(proprName)) {
 					my.propr[proprName] = my.getStoredPropr(proprName);

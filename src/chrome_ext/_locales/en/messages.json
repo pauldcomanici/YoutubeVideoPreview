@@ -1,4 +1,19 @@
 {
+    "extensionName": {
+        "message": "YouTube Video Preview"
+    },
+    "extensionDescription": {
+        "message": "Mouse hover one youtube video thumbnail to see more images for video"
+    },
+    "extensionUpdate": {
+        "message": "$extensionName$  was updated",
+        "placeholders": {
+            "extensionName": {
+                "content": "$1",
+                "example": "YouTube Video Preview"
+            }
+        }
+    },
 	"about": {
 		"message": "about"
 	},

@@ -4,7 +4,7 @@
  */
 (function () {
     "use strict";
-	/*global window, document, chrome, YtSettings, YtProprShowIcon, YtProprHideIconConfirm */
+	/*global window, document, chrome, YtSettings, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM */
 	var my = {
 		hidePageActionConfirm: false,
 		/**
@@ -37,8 +37,8 @@
 		 * @description Executed when user clicks Yes button
 		 */
 		hidePopupYesClick: function () {
-			YtSettings.setPropr(YtProprShowIcon, false);
-			YtSettings.setPropr(YtProprHideIconConfirm, my.hidePageActionConfirm);
+			YtSettings.setPropr(PROPR_SHOW_ICON, false);
+			YtSettings.setPropr(PROPR_HIDE_ICON_CONFIRM, my.hidePageActionConfirm);
 			window.close();
 		},
 		/**
@@ -82,7 +82,7 @@
 		 */
 		init: function () {
 			var hideIconConfirmEl;
-			my.hidePageActionConfirm = YtSettings.getPropr(YtProprHideIconConfirm);
+			my.hidePageActionConfirm = YtSettings.getPropr(PROPR_HIDE_ICON_CONFIRM);
 			hideIconConfirmEl = document.getElementById("hideIconConfirmCheckbox");
 			if (!my.hidePageActionConfirm) {
 				hideIconConfirmEl.setAttribute("checked", true);

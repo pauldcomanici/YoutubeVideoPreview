@@ -6,6 +6,7 @@
 	"use strict";
 	/*global chrome, document*/
 	function execute() {
+		document.getElementById("headerTitle").textContent = chrome.i18n.getMessage("extensionName");
 		document.getElementById("page_feedback").textContent = chrome.i18n.getMessage("feedback");
 		document.getElementById("page_about").textContent = chrome.i18n.getMessage("about");
 		document.getElementById("page_options").textContent = chrome.i18n.getMessage("options");
