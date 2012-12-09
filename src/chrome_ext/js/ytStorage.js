@@ -59,7 +59,9 @@ var YtStorage = (function () {
 			 * @param {String} itemValue
 			 */
 			setItem: function setItem(itemName, itemValue) {
-				chrome.storage.sync.set({itemName: itemValue});
+				var setObj = {};
+				setObj[itemName] = itemValue;
+				chrome.storage.sync.set(setObj);
 			}
 	};
 	/**
