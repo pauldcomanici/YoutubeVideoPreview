@@ -2,17 +2,24 @@
     "extensionName": {
         "message": "YouTube Video Preview"
     },
-    "extensionDescription": {
-        "message": "Mouse hover one youtube video thumbnail to see more images for video"
+    "extensionPopupTitle": {
+        "message": "$extensionName$ - settings",
+        "placeholders": {
+            "extensionName": {
+                "content": "YouTube Video Preview"
+            }
+        }
     },
     "extensionUpdate": {
         "message": "$extensionName$  was updated",
         "placeholders": {
             "extensionName": {
-                "content": "$1",
-                "example": "YouTube Video Preview"
+                "content": "YouTube Video Preview"
             }
         }
+    },
+    "extensionDescription": {
+        "message": "Mouse hover one youtube video thumbnail to see more images for video"
     },
     "loading": {
         "message": "loading ..."
@@ -25,35 +32,117 @@
     },
     /* END general strings */
     /* START site.html strings */
-	"about": {
-		"message": "about"
-	},
-	"options": {
-		"message": "options"
-	},
-	"settings": {
-		"message": "settings"
-	},
-	"feedback": {
-		"message": "feedback"
-	},
-	"imageTimeLabel": {
-		"message": "Rotate speed:"
-	},
-	"imageTimeDescription": {
-		"message": "milliseconds (1000 milliseconds = 1 second)"
-	},
-	"enableRatingViewLabel": {
-		"message": "Rating preview:"
-	},
-	"enableRatingViewTrue": {
-		"message": "enable"
-	},
-	"enableRatingViewFalse": {
-		"message": "disable"
-	},
+    "about": {
+        "message": "about"
+    },
+    "options": {
+        "message": "options"
+    },
+    "settings": {
+        "message": "settings"
+    },
+    "feedback": {
+        "message": "feedback"
+    },
+    "imageTimeLabel": {
+        "message": "Rotate speed:"
+    },
+    "imageTimeDescription": {
+        "message": "milliseconds (1000 milliseconds = 1 second)"
+    },
+    "enableRatingViewLabel": {
+        "message": "Rating preview:"
+    },
+    "enableRatingViewTrue": {
+        "message": "enable"
+    },
+    "enableRatingViewFalse": {
+        "message": "disable"
+    },
+    "optionShowIconFlagLabel": {
+        "message": "Show icon:"
+    },
+    "optionShowIconFlagDesc": {
+        "message": "set if you want to see extension icon in omnibox (url bar)"
+    },
+    "optionsHideIconConfirmFlagLabel": {
+        "message": "Confirm at hide icon:"
+    },
+    "optionsSaveMessage": {
+        "message": "Everything is automatically saved at change"
+    },
+    "feedbackPage": {
+        "message": "<p>$question$</p><br><p>$issue$</p><br>
+                <p>$suggestion$</p><br>$contact1$<br>$contact2$",
+        "placeholders": {
+            "question": {
+                "content": "Do you have a question?"
+            },
+            "issue": {
+                "content": "Do you have a question?"
+            },
+            "suggestion": {
+                "content": "Do you have any suggestion?"
+            },
+            "contact1": {
+                "content": "Please don't hesitate to contact me at <a href=\"mailto:darkyndy@gmail.com\">darkyndy@gmail.com</a>"
+            },
+            "contact2": {
+                "content": "or create issue at: <a href=\"https://github.com/darkyndy/YoutubeVideoPreview/issues\" target=\"_blank\">GitHub YoutubeVideoPreview issues</a>"
+            }
+        }
+    },
+    "siteAboutHeadline": {
+        "message": "Youtube&trade; Video Preview helps you decide whether it is worth watching a video before clicking it."
+    },
+    "siteAboutWorksHeadline": {
+        "message": "It works using:"
+    },
+    "siteAboutWorksDesc": {
+        "message": "<li>$link1$</li><li>$link2$</li>",
+        "placeholders": {
+            "link1": {
+                "content": "<a href=\"http://www.youtube.com/\" target=\"_blank\">http://www.youtube.com/</a> (non secure protocol)"
+            },
+            "link2": {
+                "content": "<a href=\"https://www.youtube.com/\" target=\"_blank\">https://www.youtube.com/</a> (secure protocol)"
+            }
+        }
+    },
+    "siteAboutFeaturesHeadline": {
+        "message": "Features:"
+    },
+    "siteAboutFeaturesDesc": {
+        "message": "<li>$feature1$</li><li>$feature2$</li><li>$feature3$</li><li>$feature4$</li><li>$feature5$</li><li>$feature6$</li><li>$feature7$</li>",
+        "placeholders": {
+            "feature1": {
+                "content": "Mouseover a thumbnail at youtube.com and you will see other thumbnails from that video, by this you can determine if the content is what you are interested in."
+            },
+            "feature2": {
+                "content": "Below each video you can see rating statistics, this will help you to check if the video is worth watching."
+            },
+            "feature3": {
+                "content": "Option to change image rotating time"
+            },
+            "feature4": {
+                "content": "Option to enable/disable rating preview"
+            },
+            "feature5": {
+                "content": "Option to view/hide extension icon in omnibox"
+            },
+            "feature6": {
+                "content": "Option to be asked if you want to hide icon in omnibox"
+            },
+            "feature7": {
+                "content": "Works on Google Chrome minimum version 20."
+            }
+        }
+    },
+    "siteAboutCode": {
+        "message": "Extension source code is available at <a href=\"https://github.com/darkyndy/YoutubeVideoPreview/tree/master/src/chrome_ext\" target=\"_blank\">Github</a>:"
+    },
     /* END site.html strings */
-	/* START popup.html strings */
+    /* START popup.html strings */
     "popupOptions": {
         "message": "Options..."
     },
@@ -63,20 +152,20 @@
     "popupAboutHideIcon": {
         "message": "YouTube Video Preview will continue to work, only the icon will be removed from the address bar"
     },
-	"popupAreYouSureQuestion": {
-		"message": "Are you sure?"
-	},
-	"popupHideIconConfirmLabel": {
-		"message": "Do not ask next time"
-	},
-	"popupHideIconOptionsInfoDesc": {
-		"message": "To show the icon again go to:"
-	},
-	"popupHideIconOptionsInfoPath": {
-		"message": "Tools > Extensions > Youtube video preview > Options"
-	},
+    "popupAreYouSureQuestion": {
+        "message": "Are you sure?"
+    },
+    "popupHideIconConfirmLabel": {
+        "message": "Do not ask next time"
+    },
+    "popupHideIconOptionsInfoDesc": {
+        "message": "To show the icon again go to:"
+    },
+    "popupHideIconOptionsInfoPath": {
+        "message": "Tools > Extensions > Youtube video preview > Options"
+    },
     /* END popup.html strings */
-	"dummy": {
-		"message": "dummy"
-	}
+    "dummy": {
+        "message": "dummy"
+    }
 }

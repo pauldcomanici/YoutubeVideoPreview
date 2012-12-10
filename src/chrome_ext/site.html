@@ -51,7 +51,7 @@
 						<option id="showIconFlagYes" value="true">yes</option>
 						<option id="showIconFlagNo" value="false">no</option>
 					</select></span>
-					<span class="optionCol optionColDesc">set if you want to see extension icon in omnibox (url bar)</span>
+					<span id="showIconFlagDesc" class="optionCol optionColDesc">set if you want to see extension icon in omnibox (url bar)</span>
 				</div>
 				<div class="clear"></div>
 				<div class="option">
@@ -63,14 +63,14 @@
 					<span class="optionCol optionColDesc"></span>
 				</div>
 				<div class="clear"></div>
-				<p class="gray">Everything is automatically saved at change</p>
+				<p id="optionsSaveMessage" class="gray">Everything is automatically saved at change</p>
 			</section>
 			<section id="page_about_" class="site_pages" hidden>
-				<p><b>Youtube&trade; Video Preview helps you decide whether it is worth watching a video before clicking it.</b></p>
+				<p><b id="siteAboutHeadline">Youtube&trade; Video Preview helps you decide whether it is worth watching a video before clicking it.</b></p>
 				<br>
 				<br>
-				<p><i>It works using:</i></p>
-				<ol>
+				<p><i id="siteAboutWorksHeadline">It works using:</i></p>
+				<ol id="siteAboutWorksDesc">
 					<li>
 						<a href="http://www.youtube.com/" target="_blank">http://www.youtube.com/</a> (non secure protocol)
 					</li>
@@ -79,8 +79,8 @@
 					</li>
 				</ol>
 				<br>
-				<p><i>Features:</i></p>
-				<ul>
+				<p><i id="siteAboutFeaturesHeadline">Features:</i></p>
+				<ul id="siteAboutFeaturesDesc">
 					<li>
 						Mouseover a thumbnail at youtube.com and you will see other thumbnails from that video, by this you can determine if the content is what you are interested in.
 					</li>
@@ -88,18 +88,15 @@
 				 		Below each video you can see rating statistics, this will help you to check if the video is worth watching.
 					</li>
 					<li>
-				 		Works on Google Chrome minimum version 18.
+				 		Option to change image rotating time, option to enable/disable rating preview, option to view/hide extension icon in omnibox, option to be asked if you want to hide icon in omnibox.
 					</li>
-					<li>
-				 		Option to change image rotating time and option to enable/disable rating preview.
-					</li>
-					<li>
-				 		Option to hide icon from omnibox.
-					</li>
+                    <li>
+                        Works on Google Chrome minimum version 18.
+                    </li>
 				</ul>
 				<br>
 				<br>
-				<p>Extension source code is available at <a href="https://github.com/darkyndy/YoutubeVideoPreview/tree/master/src/chrome_ext" target="_blank">Github</a></p>
+				<p id="siteAboutCode">Extension source code is available at <a href="https://github.com/darkyndy/YoutubeVideoPreview/tree/master/src/chrome_ext" target="_blank">Github</a></p>
 			</section>
 			<section id="page_feedback_" class="site_pages" hidden>
 				<p>Do you have a question?</p>

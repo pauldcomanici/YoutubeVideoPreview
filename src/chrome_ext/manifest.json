@@ -21,7 +21,7 @@
     "page_action": {
         "matches": [ "http://www.youtube.com/*", "https://www.youtube.com/*" ],
         "default_icon": "ytpreview16.png",
-        "default_title": "Youtube video preview - settings",
+        "default_title": "__MSG_extensionPopupTitle__",
         "default_popup": "popup.html"
     },
     "options_page": "site.html",

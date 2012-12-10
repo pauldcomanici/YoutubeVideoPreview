@@ -24,12 +24,10 @@
 		}
 	}
 	/**
-	 * @description Execute translation
+	 * @description Translate site.html
 	 */
-	function execute() {
-		//general strings
-		addLocalization("loading", "loading");
-		//site page
+	function translateSitePage() {
+		//site.html page
 		addLocalization("headerTitle", "extensionName");
 		addLocalization("page_feedback", "feedback");
 		addLocalization("page_about", "about");
@@ -39,7 +37,29 @@
 		addLocalization("enableRatingViewLabel", "enableRatingViewLabel");
 		addLocalization("enableRatingViewTrue", "enableRatingViewTrue");
 		addLocalization("enableRatingViewFalse", "enableRatingViewFalse");
-		//popup page
+		addLocalization("showIconFlagLabel", "optionShowIconFlagLabel");
+		addLocalization("showIconFlagYes", "yes");
+		addLocalization("showIconFlagNo", "no");
+		addLocalization("showIconFlagDesc", "optionShowIconFlagDesc");
+		addLocalization("hideIconConfirmFlagLabel", "optionsHideIconConfirmFlagLabel");
+		addLocalization("hideIconConfirmFlagFalse", "yes");
+		addLocalization("hideIconConfirmFlagTrue", "no");
+		addLocalization("optionsSaveMessage", "optionsSaveMessage");
+		//feedback section
+		addLocalization("page_feedback_", "feedbackPage", "innerHTML");
+		//about section
+		addLocalization("siteAboutHeadline", "siteAboutHeadline", "innerHTML");
+		addLocalization("siteAboutWorksHeadline", "siteAboutWorksHeadline", "innerHTML");
+		addLocalization("siteAboutWorksDesc", "siteAboutWorksDesc", "innerHTML");
+		addLocalization("siteAboutFeaturesHeadline", "siteAboutFeaturesHeadline", "innerHTML");
+		addLocalization("siteAboutFeaturesDesc", "siteAboutFeaturesDesc", "innerHTML");
+		addLocalization("siteAboutCode", "siteAboutCode", "innerHTML");
+	}
+	/**
+	 * @description Translate popup.html
+	 */
+	function translatePopupPage() {
+		//popup.html page
 		addLocalization("ytPreviewOptions", "popupOptions");
 		addLocalization("ytPreviewHideIcon", "popupHideIcon");
 		addLocalization("popupAboutHideIcon", "popupAboutHideIcon");
@@ -49,6 +69,15 @@
 		addLocalization("hideIconConfirmLabel", "popupHideIconConfirmLabel");
 		addLocalization("hideIconOptionsInfoDesc", "popupHideIconOptionsInfoDesc");
 		addLocalization("hideIconOptionsInfoPath", "popupHideIconOptionsInfoPath");
+	}
+	/**
+	 * @description Execute translation
+	 */
+	function execute() {
+		//general strings
+		addLocalization("loading", "loading");
+		translateSitePage();
+		translatePopupPage();
 	}
 	//execute translation
 	execute();
