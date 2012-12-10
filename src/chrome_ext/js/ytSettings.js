@@ -1,9 +1,12 @@
 /**
- * @description YouTube Video Preview Settings
+ * @description YouTube Video Preview Settings class
+ *              communicate with YtStorage for retrieving/updating settings
+ *              
+ * @requires YtStorage
  */
 var YtSettings = (function () {
 	"use strict";
-	/*global localStorage, PROPR_IMAGE_TIME, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM, PROPR_VIEW_RATING */
+	/*global console, YtStorage, PROPR_IMAGE_TIME, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM, PROPR_VIEW_RATING */
 	var my,
 		publicMethods;
 	my = {
@@ -58,102 +61,105 @@ var YtSettings = (function () {
 		},
 		/**
 		 * 
-		 * @description Set property to localstorage
-		 * @param {String} proprName
-		 * @param {Object} proprVal
-		 */
-		setStoredProp: function (proprName, proprVal) {
-			localStorage[proprName] = proprVal;
-		},
-		/**
-		 * 
-		 * @description Get stored property from localStorage
-		 * @param {String} proprName
-		 * @returns {Object}
-		 */
-		getStoredPropr: function (proprName) {
-			var proprVal;
-			proprVal = localStorage[proprName];
-			if (proprVal === undefined) {
-				if (my.initialized) {
-					proprVal = my.getPropr(proprName);
-				} else {
-					proprVal = my.propr[proprName];
-				}
-				my.setStoredProp(proprName, proprVal);
-			} else {
-				proprVal = my.filterPropr(proprName, proprVal);
-			}
-			return proprVal;
-		},
-		/**
-		 * 
 		 * @description Set properties
 		 * @param {String} proprName
 		 * @param {String} proprVal
-		 * @returns {Object}
+		 * @param {Function} cbFn
+		 * @param {Array} cbArgs
 		 */
-		setPropr: function (proprName, proprVal) {
+		setPropr: function (proprName, proprVal, cbFn, cbArgs) {
 			proprVal = my.filterPropr(proprName, proprVal);
 			my.propr[proprName] = proprVal;
-			my.setStoredProp(proprName, proprVal);
-			return proprVal;
+			YtStorage.setItem(proprName, proprVal);
+			if (cbFn) {
+				cbArgs = cbArgs || [];
+				cbArgs.unshift(proprVal);
+				cbArgs.unshift(proprName);
+				cbFn.apply(null, cbArgs);
+			}
+		},
+		/**
+		 * @description At properties initialization callback
+		 * @param items
+		 */
+		initCb: function getAllCb(items) {
+			var proprName;
+			for (proprName in my.propr) {
+				if (my.propr.hasOwnProperty(proprName)) {
+					if (items.hasOwnProperty(proprName)) {
+						my.propr[proprName] = my.filterPropr(proprName, items[proprName]);
+					} else {
+						YtStorage.setItem(proprName, my.propr[proprName]);
+					}
+				}
+			}
+			my.initialized = true;
 		},
 		/**
 		 * 
 		 * @description Initialize settings
 		 */
 		init: function () {
-			var proprName;
+			var proprNames;
 			my.propr[PROPR_IMAGE_TIME] = 1000;
 			my.propr[PROPR_VIEW_RATING] = true;
 			my.propr[PROPR_SHOW_ICON] = true;
 			my.propr[PROPR_HIDE_ICON_CONFIRM] = true;
-			for (proprName in my.propr) {
-				if (my.propr.hasOwnProperty(proprName)) {
-					my.propr[proprName] = my.getStoredPropr(proprName);
+			proprNames = [PROPR_IMAGE_TIME, PROPR_VIEW_RATING, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM];
+			YtStorage.getAll(proprNames, my.initCb);
+		},
+		/**
+		 * 
+		 * @description Test class initialized and if not initialize it
+		 * @param {String} proprName
+		 * @param {Function} cbFn
+		 * @param {Array} cbArgs
+		 */
+		testInitialized: function (proprName, cbFn, cbArgs) {
+			if (!my.initialized) {
+				console.log("settings not initialized!");
+			} else {
+				if (cbFn) {
+					cbArgs = cbArgs || [];
+					if (proprName === "all") {
+						cbArgs.unshift(my.propr);
+					} else {
+						cbArgs.unshift(my.propr[proprName]);
+					}
+					cbArgs.unshift(proprName);
+					cbFn.apply(null, cbArgs);
 				}
 			}
 		},
 		/**
 		 * 
-		 * @description Test class initialized and if not initialize it
-		 */
-		testInitialized: function () {
-			if (!my.initialized) {
-				my.init();
-			}
-			my.initialized = true;
-		},
-		/**
-		 * 
 		 * @description Get properties
 		 * @param {String} proprName
-		 * @returns {Object}
+		 * @param {Function} cbFn
+		 * @param {Array} cbArgs
 		 */
-		getPropr: function (proprName) {
-			my.testInitialized();
-			if (proprName) {
-				return my.propr[proprName];
-			}
-			return my.propr;
+		getPropr: function (proprName, cbFn, cbArgs) {
+			my.testInitialized(proprName, cbFn, cbArgs);
 		},
 		/**
 		 * 
 		 * @description Get all properties
-		 * @returns {Object}
+		 * @param {Function} cbFn
+		 * @param {Array} cbArgs
 		 */
-		getSettings: function () {
-			my.testInitialized();
-			return my.propr;
+		getSettings: function (cbFn, cbArgs) {
+			my.testInitialized("all", cbFn, cbArgs);
 		}
 	};
-	my.testInitialized();
+	my.init();
 	//public
 	publicMethods = {
 		getSettings: my.getSettings,
 		getPropr: my.getPropr,
-		setPropr: my.setPropr
+		setPropr: my.setPropr,
+		isInit: function isInit() {
+			return my.initialized;
+		}
 	};
 	return publicMethods;
 }());

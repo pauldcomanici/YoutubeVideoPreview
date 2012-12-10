@@ -4,15 +4,35 @@
  */
 (function () {
     "use strict";
-	/*global window, document, chrome, YtSettings, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM */
+	/*global window, document, chrome, CustomEvent, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM */
 	var my = {
 		hidePageActionConfirm: false,
+		/**
+		 * @description Retrieve background page
+		 */
+		getBackgroundPage: function getBackgroundPage() {
+			var bgPage = null;
+			if (chrome && chrome.extension && chrome.extension.getBackgroundPage) {
+				bgPage = chrome.extension.getBackgroundPage();
+			}
+			return bgPage;
+		},
 		/**
 		 * 
 		 * @description Executed when user clicks option
 		 */
 		optionsClick: function () {
-			chrome.extension.sendMessage("openOptions");
+			var bgWindow,
+				customEvent;
+			bgWindow = my.getBackgroundPage();
+			if (bgWindow) {
+				customEvent = new CustomEvent("openOptions", {
+					detail: {
+						sentFrom: "YtPopup"
+					}
+				});
+				bgWindow.dispatchEvent(customEvent);
+			}
 		},
 		/**
 		 * 
@@ -37,8 +57,21 @@
 		 * @description Executed when user clicks Yes button
 		 */
 		hidePopupYesClick: function () {
-			YtSettings.setPropr(PROPR_SHOW_ICON, false);
-			YtSettings.setPropr(PROPR_HIDE_ICON_CONFIRM, my.hidePageActionConfirm);
+			var settingsUpdated = {},
+				customEvent,
+				bgWindow;
+			bgWindow = my.getBackgroundPage();
+			if (bgWindow) {
+				settingsUpdated[PROPR_SHOW_ICON] = false;
+				settingsUpdated[PROPR_HIDE_ICON_CONFIRM] = my.hidePageActionConfirm;
+				customEvent = new CustomEvent("setPropr", {
+					detail: {
+						sentFrom: "YtPopup",
+						settings: settingsUpdated
+					}
+				});
+				bgWindow.dispatchEvent(customEvent);
+			}
 			window.close();
 		},
 		/**
@@ -78,16 +111,48 @@
 		},
 		/**
 		 * 
-		 * @description Initialize
+		 * @description Callback function executed when hidePageActionConfirm is retrieved
+		 * @param hidePageActionConfirm
 		 */
-		init: function () {
+		atGetHidePageActionConfirm: function atGetHidePageActionConfirm(hidePageActionConfirm) {
 			var hideIconConfirmEl;
-			my.hidePageActionConfirm = YtSettings.getPropr(PROPR_HIDE_ICON_CONFIRM);
+			document.getElementById("loading").setAttribute("hidden", true);
+			document.getElementById("popupMain").removeAttribute("hidden");
+			my.hidePageActionConfirm = hidePageActionConfirm;
 			hideIconConfirmEl = document.getElementById("hideIconConfirmCheckbox");
 			if (!my.hidePageActionConfirm) {
 				hideIconConfirmEl.setAttribute("checked", true);
 			}
 			my.delegate();
+		},
+		/**
+		 * @description Listener to messages
+		 * @param request
+		 */
+		onRequest: function onRequest(request) {
+			if (request && typeof request === "object") {
+				if (request.message === "setHidePageActionConfirm") {
+					my.atGetHidePageActionConfirm(request.propr);
+				}
+			}
+		},
+		/**
+		 * 
+		 * @description Initialize
+		 */
+		init: function () {
+			var customEvent,
+				bgWindow;
+			//Listen for the messages
+			chrome.extension.onMessage.addListener(my.onRequest);
+			customEvent = new CustomEvent("getPropr", {
+				detail: {
+					returnOn: "YtPopup",
+					prop: PROPR_HIDE_ICON_CONFIRM
+				}
+			});
+			bgWindow = my.getBackgroundPage();
+			bgWindow.dispatchEvent(customEvent);
 		}
 	};
 	my.init();

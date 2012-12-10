@@ -1,10 +1,12 @@
 /**
  * 
  * @description Logic for background page
+ *              all extension calls are coming from background page 
+ *              and they are sent from background page
  */
 (function () {
 	"use strict";
-	/*global chrome, window, CustomEvent, YtSettings, PROPR_IMAGE_TIME, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM, PROPR_VIEW_RATING */
+	/*global chrome, window, setTimeout, CustomEvent, YtSettings, PROPR_IMAGE_TIME, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM, PROPR_VIEW_RATING */
 	var my;
 	my = {
 		/**
@@ -46,7 +48,7 @@
 		 * @param {Array} callParams
 		 * @param {Boolean} runContentScript
 		 */
-		updateAllYoutubeTabs: function (callMethod, callParams, runContentScript) {
+		updateAllYoutubeTabs: function updateAllYoutubeTabs(callMethod, callParams, runContentScript) {
 			chrome.windows.getAll({populate: true}, function (windows) {
 				var windowsLength,
 					windowIndex,
@@ -75,6 +77,13 @@
 			});
 		},
 		/**
+		 * @description Function executed before updateAllYoutubeTabs is called (callback function)
+		 * @param {Boolean} iconVisible
+		 */
+		beforeUpdateAllYoutubeTabs: function beforeUpdateAllYoutubeTabs(iconVisible) {
+			my.updateAllYoutubeTabs("toggleIcon", [iconVisible], true);
+		},
+		/**
 		 * 
 		 * @description Open options page
 		 */
@@ -94,6 +103,18 @@
 			});
 		},
 		/**
+		 * @description Callback function after icon flag was retrieved
+		 * @param {String} proprName
+		 * @param {Boolean} showIconFlag
+		 * @param {Number} tabId
+		 */
+		atRetrieveIconFlag: function atRetrieveIconFlag(proprName, showIconFlag, tabId) {
+			if (showIconFlag) {
+				// Show the page action
+				chrome.pageAction.show(tabId);
+			}
+		},
+		/**
 		 * 
 		 * @description Called when a message is passed.
 		 * @param {String} request
@@ -101,26 +122,18 @@
 		 * @param {Function} sendResponse
 		 */
 		onRequest: function onRequest(request, sender, sendResponse) {
-			var rotateTime,
-				settings,
-				showIconFlag;
-			if (request && typeof request === "string") {
-				if (request === "openOptions") {
-					my.openOptions();
-				} else if (request === "getImageRotateTime") {
-					rotateTime = YtSettings.getPropr(PROPR_IMAGE_TIME);
-					sendResponse({rotateTime: rotateTime});
-				} else if (request === "getSettings") {
-					settings = YtSettings.getSettings();
-					sendResponse({settings: settings});
-				} else if (request === "showAction") {
-					showIconFlag = YtSettings.getPropr(PROPR_SHOW_ICON);
-					if (showIconFlag) {
-						// Show the page action
-						chrome.pageAction.show(sender.tab.id);
+			var reqMsg,
+				reqCb;
+			if (request) {
+				if (typeof request === "string") {
+					reqMsg = request;
+					if (reqMsg === "openOptions") {
+						my.openOptions();
+					} else if (reqMsg === "getSettings") {
+						my.callOnGetSettingsPropr("all", my.messageActionPageWithSettings, [sender.tab.id]);
+					} else if (reqMsg === "showAction") {
+						my.callOnGetSettingsPropr(PROPR_SHOW_ICON, my.atRetrieveIconFlag, [sender.tab.id]);
 					}
-					// Return nothing to let the connection be cleaned up.
-					sendResponse({});
 				}
 			}
 		},
@@ -147,7 +160,7 @@
 		 * @param {String} eventName
 		 * @param {String} newValue
 		 */
-		messageOptionsPageForUpdate: function (eventName, newValue) {
+		messageOptionsPageForUpdate: function messageOptionsPageForUpdate(eventName, newValue) {
 			var customEvent,
 				extensionView,
 				extensionViews,
@@ -166,6 +179,7 @@
 						}
 					});
 					extensionView.dispatchEvent(customEvent);
+					break;
 				}
 			}
 		},
@@ -177,8 +191,18 @@
 		 * @param {String} newValue
 		 * @param {Number} tabId
 		 */
-		messageActionPageForUpdate: function (proprName, newValue, tabId) {
+		messageActionPageForUpdate: function messageActionPageForUpdate(proprName, newValue, tabId) {
 			chrome.tabs.sendMessage(tabId, {message: "updateSettings", response: {proprName: proprName, newValue: newValue}});
+		},
+		/**
+		 * 
+		 * @description Send message to tabId with extension settings
+		 * @param {String} proprName
+		 * @param {Object} settings
+		 * @param {Number} tabId
+		 */
+		messageActionPageWithSettings: function messageActionPageWithSettings(proprName, settings, tabId) {
+			chrome.tabs.sendMessage(tabId, {message: "setSettings", response: {settings: settings}});
 		},
 		/**
 		 * 
@@ -195,7 +219,7 @@
 			changeOn = evt.key;
 			newValue = evt.newValue;
 			if (changeOn === PROPR_SHOW_ICON) {
-				if (newValue === "false") {
+				if (newValue === "false" || newValue === false) {
 					newValue = false;
 				} else {
 					newValue = true;
@@ -212,7 +236,11 @@
 			}
 			if (eventForOptionsPage) {
 				//now test if event was sent from options page
-				isOptionPage = my.isOptionPage(evt.url);
+				if (evt.url) {
+					isOptionPage = my.isOptionPage(evt.url);
+				} else {
+					isOptionPage = false;
+				}
 				if (!isOptionPage) {
 					my.messageOptionsPageForUpdate(eventForOptionsPage, newValue);
 				}
@@ -222,19 +250,111 @@
 			}
 		},
 		/**
+		 * @description Send message back to sendOn class with setting property
+		 * @param {String} proprName
+		 * @param {Object} proprVal
+		 * @param {String} sendOn
+		 */
+		sendSettingsMessageBack: function sendSettingsMessageBack(proprName, proprVal, sendOn) {
+			if (sendOn === "YtPopup") {
+				chrome.extension.sendMessage({message: "setHidePageActionConfirm", propr: proprVal});
+			} else if (sendOn === "YtOptions") {
+				my.messageOptionsPageForUpdate("initOptionsPage", proprVal);
+			}
+		},
+		/**
+		 * @description Properties getter, called from other scripts for retrieving settings
+		 * @param {CustomEvent} evt
+		 */
+		proprGetter: function proprGetter(evt) {
+			var reqCb,
+				request;
+			request = evt.detail;
+			if (request.returnOn) {
+				reqCb = my.sendSettingsMessageBack;
+			}
+			my.callOnGetSettingsPropr(request.prop, reqCb, [request.returnOn]);
+		},
+		/**
+		 * @description Properties setter, called from other scripts for updating settings
+		 * @param {CustomEvent} evt
+		 */
+		proprSetter: function proprSetter(evt) {
+			var reqCb,
+				request,
+				proprName;
+			request = evt.detail;
+			if (request.sentFrom) {
+				reqCb = request.sentFrom;
+			}
+			for (proprName in request.settings) {
+				if (request.settings.hasOwnProperty(proprName)) {
+					YtSettings.setPropr(proprName, request.settings[proprName]);
+				}
+			}
+		},
+		/**
+		 * @description Function executed when something changes in chrom.storage.sync
+		 * @param {Object} changes
+		 */
+		chromeStorageSync: function chromeStorageSync(changes) {
+			var evt = {},
+				changeOn;
+			if (changes) {
+				for (changeOn in changes) {
+					if (changes.hasOwnProperty(changeOn)) {
+						evt.key = changeOn;
+						evt.newValue = changes[changeOn].newValue;
+						evt.url = "";
+						my.storageHandler(evt);
+					}
+				}
+			}
+		},
+		/**
+		 * @description Function that makes call to get settings properties
+		 * @param {String} proprName
+		 * @param {Function} cbFn
+		 * @param {Array} cbArgs
+		 */
+		callOnGetSettingsPropr: function callOnGetSettingsPropr(proprName, cbFn, cbArgs) {
+			var isReady;
+			isReady = YtSettings.isInit();
+			if (isReady) {
+				YtSettings.getPropr(proprName, cbFn, cbArgs);
+			} else {
+				setTimeout(function () { callOnGetSettingsPropr(proprName, cbFn, cbArgs); }, 15);
+			}
+		},
+		/**
+		 * @description Attach event for storage changes
+		 */
+		attachStorageEvent: function attachStorageEvent() {
+			if (chrome.storage && chrome.storage.sync) {
+				//event listener to chrome.storage.sync updates
+				chrome.storage.onChanged.addListener(my.chromeStorageSync);
+			} else {
+				//set storage event listener
+				window.addEventListener("storage", my.storageHandler, false);
+			}
+		},
+		/**
 		 * 
 		 * @description Attach events
 		 */
-		delegate: function () {
-			//set storage event listener
-			window.addEventListener("storage", my.storageHandler, false);
+		delegate: function delegate() {
+			my.attachStorageEvent();
+			//set custom event listener for getting prop
+			window.addEventListener("getPropr", my.proprGetter, false);
+			//set custom event listener for setting prop
+			window.addEventListener("setPropr", my.proprSetter, false);
+			//set custom event listener for open options page
+			window.addEventListener("openOptions", my.openOptions, false);
 			//Listen for the content script to send a message to the background page.
 			chrome.extension.onMessage.addListener(my.onRequest);
 			//listener for extension install/update
-			chrome.runtime.onInstalled.addListener(function(details) {
-				var iconVisible;
-				iconVisible = YtSettings.getPropr(PROPR_SHOW_ICON);
-				my.updateAllYoutubeTabs("toggleIcon", [iconVisible], true);
+			chrome.runtime.onInstalled.addListener(function (details) {
+				my.callOnGetSettingsPropr(PROPR_SHOW_ICON, my.beforeUpdateAllYoutubeTabs);
 			});
 		},
 		/**

@@ -4,8 +4,7 @@
 (function () {
 	"use strict";
 	/*global window, document, setTimeout, DyDomHelper, XMLHttpRequest, ActiveXObject, chrome, PROPR_VIEW_RATING, PROPR_IMAGE_TIME */
-	var my,
-		publicMethods;
+	var my;
 	my = {
 		defaultImg: "default",
 		defaultHqImg: "hqdefault",
@@ -38,7 +37,6 @@
 				ratingCount = 0,
 				ratingElCss = {},
 				parentElCss,
-				marginBottom = 0,
 				videoThumbEl,
 				likesCss,
 				parentElWidth = "138px",
@@ -547,22 +545,28 @@
 		onRequest: function onRequest(request) {
 			var proprName,
 				newValue,
-				response;
+				response,
+				message;
 			if (typeof request === "object") {
-				if (request.message === "updateSettings") {
+				if (request.message) {
+					message = request.message;
 					response = request.response;
-					newValue = response.newValue;
-					proprName = response.proprName;
-					if (proprName === PROPR_VIEW_RATING) {
-						if (newValue === false || newValue === "false") {
-							newValue = false;
-						} else {
-							newValue = true;
+					if (message === "updateSettings") {
+						newValue = response.newValue;
+						proprName = response.proprName;
+						if (proprName === PROPR_VIEW_RATING) {
+							if (newValue === false || newValue === "false") {
+								newValue = false;
+							} else {
+								newValue = true;
+							}
+						} else if (proprName === PROPR_IMAGE_TIME) {
+							newValue = parseInt(newValue, 10);
 						}
-					} else if (proprName === PROPR_IMAGE_TIME) {
-						newValue = parseInt(newValue, 10);
+						my.settings[proprName] = newValue;
+					} else if (message === "setSettings") {
+						my.parseResponseAtGetSettings(response);
 					}
-					my.settings[proprName] = newValue;
 				}
 			}
 		},
@@ -572,8 +576,8 @@
 		 */
 		delegateForExtension: function delegateForExtension() {
 			if (chrome && chrome.extension) {
-				chrome.extension.sendMessage("showAction", function (response) {});
-				chrome.extension.sendMessage("getSettings", my.parseResponseAtGetSettings);
+				chrome.extension.sendMessage("showAction");
+				chrome.extension.sendMessage("getSettings");
 				chrome.extension.onMessage.addListener(my.onRequest);
 			}
 		},
@@ -588,10 +592,4 @@
 		}
 	};
 	my.delegateForExtension();
-	//public
-//	publicMethods = {
-//		init: my.init,
-//		appendRating: my.appendRating
-//	};
-	//return publicMethods;
 }());
