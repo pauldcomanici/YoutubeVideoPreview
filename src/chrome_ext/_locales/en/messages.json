@@ -14,6 +14,17 @@
             }
         }
     },
+    "loading": {
+        "message": "loading ..."
+    },
+    "yes": {
+        "message": "yes"
+    },
+    "no": {
+        "message": "no"
+    },
+    /* END general strings */
+    /* START site.html strings */
 	"about": {
 		"message": "about"
 	},
@@ -41,6 +52,30 @@
 	"enableRatingViewFalse": {
 		"message": "disable"
 	},
+    /* END site.html strings */
+	/* START popup.html strings */
+    "popupOptions": {
+        "message": "Options..."
+    },
+    "popupHideIcon": {
+        "message": "Hide icon"
+    },
+    "popupAboutHideIcon": {
+        "message": "YouTube Video Preview will continue to work, only the icon will be removed from the address bar"
+    },
+	"popupAreYouSureQuestion": {
+		"message": "Are you sure?"
+	},
+	"popupHideIconConfirmLabel": {
+		"message": "Do not ask next time"
+	},
+	"popupHideIconOptionsInfoDesc": {
+		"message": "To show the icon again go to:"
+	},
+	"popupHideIconOptionsInfoPath": {
+		"message": "Tools > Extensions > Youtube video preview > Options"
+	},
+    /* END popup.html strings */
 	"dummy": {
 		"message": "dummy"
 	}
