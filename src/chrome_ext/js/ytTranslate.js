@@ -9,7 +9,7 @@
 	 * @description Add localization
 	 *     find element with id -> elementId
 	 *     and set for it i18n string found under messageKey
-	 *     this set is done based on setAs parameter that can be "textContent" or "value"
+	 *     this set is done based on setAs parameter that can be "textContent", "innerHTML" or "value"
 	 *       by default is "textContent"
 	 * @param {String} elementId
 	 * @param {String} messageKey
