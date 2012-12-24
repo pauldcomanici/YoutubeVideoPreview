@@ -304,7 +304,7 @@
             newImgPath = my.defaultImgPath + videoId + "/" + imgData[my.getDatasetPropr("ImgDefault")] + my.imgExt;
             imgEl.setAttribute("src", newImgPath);
             DyDomHelper.setCss(imgEl, {"width": imgData[my.getDatasetPropr("ImgWidth")], "top": ""});
-            imgEl.dataset[my.getDatasetPropr("ImgIndex")] = 0;
+            imgData[my.getDatasetPropr("ImgIndex")] = 0;
             window.clearTimeout(my.hoverTimer);
         },
         /**
@@ -342,18 +342,15 @@
                 imgId = 1;
             }
             if (videoId) {
+                setCss = {};
                 imageWidth = DyDomHelper.getCssProp(imgEl, "width", true);
                 if (imageWidth !== my.defaultImgWidth) {
-                    setCss = {"width": my.defaultImgWidth + "px"};
+                    setCss.width = my.defaultImgWidth + "px";
                     updateCss = true;
                 }
                 imageTop = DyDomHelper.getCssProp(imgEl, "top", true);
                 if (imageTop < -12) {
-                    if (updateCss) {
-                        setCss.top = 0;
-                    } else {
-                        setCss = {"top": 0};
-                    }
+                    setCss.top = 0;
                     updateCss = true;
                 }
                 newImgPath = my.defaultImgPath + videoId + "/" + imgId + my.imgExt;
@@ -362,7 +359,7 @@
                     DyDomHelper.setCss(imgEl, setCss);
                 }
             }
-            imgEl.dataset[my.getDatasetPropr("ImgIndex")] = imgId;
+            imgData[my.getDatasetPropr("ImgIndex")] = imgId;
             my.hoverTimer = setTimeout(my.switchVideoImg, my.settings[PROPR_IMAGE_TIME], imgEl, videoId);
         },
         /**
@@ -379,8 +376,10 @@
                 useDefaultImage = my.defaultImg,
                 useWidth = my.defaultImgWidth,
                 regMatch,
-                videoId;
-            testNr = videoImgEl.dataset[my.getDatasetPropr("TestNr")];
+                videoId,
+                imgData;
+            imgData = videoImgEl.dataset;
+            testNr = imgData[my.getDatasetPropr("TestNr")];
             if (testNr === undefined) {
                 testNr = 0;
             } else {
@@ -391,14 +390,14 @@
             }
             testNr = testNr + 1;
             if (my.maxTestNr > testNr) {
-                videoImgEl.dataset[my.getDatasetPropr("TestNr")] = testNr;
+                imgData[my.getDatasetPropr("TestNr")] = testNr;
                 regMatch = false;
                 initImgRegExp = new RegExp("vi\\/" + my.videoIdReg + "\\/([a-z]*)(default)\\.", "i");
                 initImg = videoImgEl.getAttribute("src");
                 if (initImg.match(initImgRegExp)) {
                     regMatch = true;
                 } else {
-                    initImg = videoImgEl.dataset.thumb;
+                    initImg = imgData.thumb;
                     if (initImg && initImg.match(initImgRegExp)) {
                         regMatch = true;
                     }
@@ -409,11 +408,11 @@
                         useDefaultImage = rezReg[2] + rezReg[3];
                         videoId = rezReg[1];
                         useWidth = DyDomHelper.getCssProp(videoImgEl, "width");
-                        videoImgEl.dataset[my.getDatasetPropr("VideoId")] = videoId;
-                        videoImgEl.dataset[my.getDatasetPropr("ImgIndex")] = 0;
-                        videoImgEl.dataset[my.getDatasetPropr("ImgDefault")] = useDefaultImage;
-                        videoImgEl.dataset[my.getDatasetPropr("ImgWidth")] = useWidth;
-                        videoImgEl.dataset[my.getDatasetPropr("Parsed")] = true;
+                        imgData[my.getDatasetPropr("VideoId")] = videoId;
+                        imgData[my.getDatasetPropr("ImgIndex")] = 0;
+                        imgData[my.getDatasetPropr("ImgDefault")] = useDefaultImage;
+                        imgData[my.getDatasetPropr("ImgWidth")] = useWidth;
+                        imgData[my.getDatasetPropr("Parsed")] = true;
                         if (videoId !== "undefined") {
                             my.initVideoSettings("in", videoImgEl);
                         }
@@ -423,7 +422,7 @@
                     setTimeout(my.testVideoImg, 100, videoImgEl, actType);
                 }
             } else if (my.maxTestNr >= testNr) {
-                videoImgEl.dataset[my.getDatasetPropr("TestNr")] = testNr + 1;
+                imgData[my.getDatasetPropr("TestNr")] = testNr + 1;
             }
         },
         /**
