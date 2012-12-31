@@ -1,9 +1,10 @@
 /**
  * Youtube Preview
  */
+/*jslint browser: true, devel: true */
 (function () {
     "use strict";
-    /*global window, document, setTimeout, DyDomHelper, XMLHttpRequest, ActiveXObject, chrome, self, PROPR_VIEW_RATING, PROPR_IMAGE_TIME */
+    /*global setTimeout, DyDomHelper, XMLHttpRequest, ActiveXObject, chrome, self, PROPR_VIEW_RATING, PROPR_IMAGE_TIME */
     var my;
     my = {
         defaultImg: "default", //default image name
@@ -31,29 +32,42 @@
             return proprName;
         },
         /**
+         * @description Filter CSS property by setting to integer
+         * @param {String} propVal
+         */
+        cssPropAsInt: function filterCssProp(propVal) {
+            propVal = parseInt(propVal, 10);
+            if (isNaN(propVal)) {
+                propVal = 0;
+            }
+            return propVal;
+        },
+        /**
          * 
          * @description Add video rating
          * @param resp
          * @param {HTMLElement} parentEl
          */
         appendRating: function appendRating(resp, parentEl) {
-            var positiveRatio = 0,
-                negativeRatio = 0,
+            var positiveRatio,
+                negativeRatio,
                 ratingEl,
-                ratingHeight,
+                ratingHeight = 3,
                 ratingHeightPx,
                 likesEl,
                 dislikesEl,
-                likes = 0,
-                ratingCount = 0,
-                ratingElCss = {},
+                likes,
+                ratingCount,
+                ratingElCss,
                 parentElCss,
                 videoThumbEl,
                 likesCss,
                 parentElWidth = "138px",
                 parentElHeight = 0,
                 parentElLeft = 0,
-                parentHasClassUxThumb = false;
+                parentHasClassUxThumb = false,
+                retrieveLeftCssProps,
+                parentElCssProps;
             function isStringOrNumber(v) {
                 var r = false;
                 if (typeof v === "string" || typeof v === "number") {
@@ -66,7 +80,7 @@
             } catch (ex) {
                 //console.log(ex.message);
             }
-            if (resp && resp.data) {
+            if (resp && resp.data && parentEl) {
                 //response has data
                 if (isStringOrNumber(resp.data.likeCount)) {
                     likes = parseInt(resp.data.likeCount, 10);
@@ -75,12 +89,16 @@
                         positiveRatio = likes * 100 / ratingCount;
                         positiveRatio = parseFloat(positiveRatio.toFixed(2));
                         negativeRatio = (100 - positiveRatio).toFixed(2);
-                        parentElWidth = DyDomHelper.getCssProp(parentEl, "width");
-                        ratingHeight = 3;
                         ratingHeightPx = ratingHeight + "px";
                         if (DyDomHelper.hasClass(parentEl, "ux-thumb-wrap")) {
                             parentHasClassUxThumb = true;
+                        } else {
+                            //find videoThumbEl only if parent element doesn't have required css class
+                            videoThumbEl = parentEl.querySelector(".ux-thumb-wrap");
                         }
+                        parentElCssProps = window.getComputedStyle(parentEl, "");
+                        parentElWidth = parentElCssProps.getPropertyValue("width");
+                        parentElHeight = my.cssPropAsInt(parentElCssProps.getPropertyValue("height"));
                         ratingElCss = {
                             maxWidth: "138px",
                             width: parentElWidth,
@@ -91,17 +109,21 @@
                             top: "auto",
                             left: 0
                         };
-                        parentElHeight = DyDomHelper.getCssProp(parentEl, "height", true) + 1;
+                        parentElHeight = parentElHeight + 1;
                         //ratingElCss.top = parentElHeight + "px";
                         if (parentHasClassUxThumb) {
                             ratingElCss.maxWidth = parentElWidth;
                         }
-                        parentElLeft = DyDomHelper.getCssProp(parentEl, "padding-left", true);
-                        parentElLeft = parentElLeft + DyDomHelper.getCssProp(parentEl, "margin-left", true);
+                        if (parentEl.nodeName === "LI" && DyDomHelper.hasClass(parentEl, "video-list-item")) {
+                            retrieveLeftCssProps = window.getComputedStyle(parentEl.childNodes[0], "");
+                        } else {
+                            retrieveLeftCssProps = parentElCssProps;
+                        }
+                        parentElLeft = my.cssPropAsInt(retrieveLeftCssProps.getPropertyValue("padding-left"));
+                        parentElLeft += my.cssPropAsInt(retrieveLeftCssProps.getPropertyValue("margin-left"));
                         if (parentElLeft > 0) {
                             ratingElCss.left = parentElLeft + "px";
                         }
-                        videoThumbEl = parentEl.querySelector(".ux-thumb-wrap");
                         if (videoThumbEl) {
                             ratingElCss.maxWidth = DyDomHelper.getCssProp(videoThumbEl, "width");
                         }
@@ -128,9 +150,9 @@
                                 title: likes + " likes from " + ratingCount + " rating (" + negativeRatio + "%)"
                             },
                             likesCss);
-                        ratingEl.appendChild(likesEl);
-                        ratingEl.appendChild(dislikesEl);
-                        parentEl.appendChild(ratingEl);
+                        ratingEl.appendChild(likesEl); //add like element
+                        ratingEl.appendChild(dislikesEl); //add dislike element
+                        parentEl.appendChild(ratingEl); //now add rating in page
                         parentElCss = {
                             position: "relative"
                         };
@@ -162,17 +184,6 @@
                 xhr = new XMLHttpRequest(); //FireFox, Safari, Chrome, Opera ...
             } catch (e) {
                 //console.log(e.message);
-                try {
-                    xhr = new ActiveXObject('Msxml2.XMLHTTP'); //IE
-                } catch (e2) {
-                    //console.log(e2.message);
-                    try {
-                        xhr = new ActiveXObject('Microsoft.XMLHTTP'); //IE
-                    } catch (e3) {
-                        //console.log(e3.message);
-                        //XMLHttpRequest not supported
-                    }
-                }
             }
             if (xhr) {
                 xhr.onreadystatechange = function () {
@@ -216,7 +227,7 @@
                 }
             } else {
                 //cannot execute request
-                //console.log("Cannot initialize XHR request");
+                console.log("Cannot initialize XHR request");
             }
         },
         /**
@@ -234,6 +245,32 @@
         },
         /**
          * 
+         * @description Find video id for rating, in case 4 when parent element is DIV
+         * @param {HTMLElement} parentEl
+         */
+        findVideoId: function findVideoId(parentEl) {
+            var imgEl,
+                imgSrc,
+                initImgRegExp,
+                rezReg,
+                videoId = "";
+            imgEl = parentEl.querySelector("img");
+            if (imgEl) {
+                imgSrc = imgEl.getAttribute("src");
+                if (imgSrc) {
+                    initImgRegExp = new RegExp("\\/vi\\/" + my.videoIdReg + "\\/", "i");
+                    if (imgSrc.match(initImgRegExp)) {
+                        rezReg = initImgRegExp.exec(imgSrc);
+                        if (rezReg.length === 2) {
+                            videoId = rezReg[1];
+                        }
+                    }
+                }
+            }
+            return videoId;
+        },
+        /**
+         * 
          * @description Test if rating was already applied to video
          *              and if not then apply it
          * @param {HTMLElement} videoEl
@@ -241,30 +278,47 @@
         testVideoForRating: function testVideoForRating(videoEl) {
             var continueTest = false,
                 nodeName,
-                videoId = "",
+                videoId,
                 videoLink = "",
                 videoRegRez,
                 videoIdRegExp = new RegExp("v=" + my.videoIdReg, "i"),
-                isCase1 = false, //when it has only "related-video" or "video-list-item-link" or "related-playlist" class
-                isCase2 = false, //when it has only "yt-uix-sessionlink" class and not case 1 classes
+                isCase1 = false, //when it has only "related-video" or "video-list-item-link" or "related-playlist" class and nodeName is A
+                isCase2 = false, //when it has only "yt-uix-sessionlink" class and not case 1 classes and nodeName is A
+                isCase3 = false, //when it has only "yt-uix-contextlink" and nodeName is A
+                isCase4 = false, //when it has only "thumb-container" and nodeName is DIV
                 parentEl;
-            if (videoEl && DyDomHelper.hasClass(videoEl, "ux-thumb-wrap")) {
-                parentEl = videoEl;
-                nodeName = videoEl.nodeName;
-                if (nodeName !== "A") {
-                    videoEl = videoEl.parentNode;
-                    if (DyDomHelper.hasClass(videoEl, "related-video") ||
-                            DyDomHelper.hasClass(videoEl, "video-list-item-link") ||
-                            DyDomHelper.hasClass(videoEl, "related-playlist")) {
-                        isCase1 = true;
-                    }
-                    if (DyDomHelper.hasClass(videoEl, "yt-uix-sessionlink") &&
-                            !isCase1) {
-                        isCase2 = true;
-                    }
-                    if (isCase1 || isCase2) {
+            if (videoEl && videoEl.parentNode) {
+                videoEl = videoEl.parentNode;
+                if (DyDomHelper.hasClass(videoEl, "ux-thumb-wrap")) {
+                    nodeName = videoEl.nodeName;
+                    if (nodeName === "A") {
+                        parentEl = videoEl;
+                        continueTest = true;
+                    } else {
+                        videoEl = videoEl.parentNode;
                         nodeName = videoEl.nodeName;
-                        if (nodeName === "A") {
+                        if (nodeName === "DIV") {
+                            if (DyDomHelper.hasClass(videoEl, "thumb-container")) {
+                                isCase4 = true;
+                            }
+                        } else {
+                            if (nodeName === "A") {
+                                if (DyDomHelper.hasClass(videoEl, "related-video") ||
+                                        DyDomHelper.hasClass(videoEl, "video-list-item-link") ||
+                                        DyDomHelper.hasClass(videoEl, "related-playlist")) {
+                                    isCase1 = true;
+                                } else {
+                                    if (DyDomHelper.hasClass(videoEl, "yt-uix-sessionlink")) {
+                                        isCase2 = true;
+                                    } else {
+                                        if (DyDomHelper.hasClass(videoEl, "yt-uix-contextlink")) {
+                                            isCase3 = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (isCase1 || isCase2 || isCase3 || isCase4) {
                             //console.log(parentEl);
                             continueTest = true;
                             parentEl = videoEl;
@@ -273,8 +327,6 @@
                             }
                         }
                     }
-                } else {
-                    continueTest = true;
                 }
             }
             //element is A and has desired css class
@@ -286,9 +338,15 @@
                         if (videoLink.match(videoIdRegExp)) {
                             videoRegRez = videoIdRegExp.exec(videoLink);
                             videoId = videoRegRez[1];
-                            //console.log(videoId);
-                            my.retrieveVideoData(videoId, parentEl);
                         }
+                    } else {
+                        if (isCase4) {
+                            videoId = my.findVideoId(parentEl);
+                        }
+                    }
+                    if (videoId) {
+                        //console.log(videoId);
+                        my.retrieveVideoData(videoId, parentEl);
                     }
                 }
             }
@@ -468,14 +526,12 @@
          * @param {Event} evt
          */
         mouseEnterVideo: function mouseEnterVideo(evt) {
-            var videoImgEl,
-                videoParentEl;
+            var videoImgEl;
             //console.log('hover in');
             videoImgEl = this.querySelector("img");
             my.initVideoSettings("in", videoImgEl);
             if (my.settings[PROPR_VIEW_RATING]) {
-                videoParentEl = this.parentNode.parentNode;
-                my.testVideoForRating(videoParentEl);
+                my.testVideoForRating(this);
             }
             evt.stopPropagation();
         },
@@ -489,10 +545,12 @@
                 targetEl;
             //console.log('hover out');
             targetEl = evt.toElement || evt.relatedTarget;
-            if (targetEl === this || targetEl.parentNode === this ||
-                    targetEl.parentNode.parentNode === this ||
-                    targetEl.parentNode.parentNode.parentNode === this) {
-                return;
+            if (targetEl) {
+                if (targetEl === this || targetEl.parentNode === this ||
+                        targetEl.parentNode.parentNode === this ||
+                        targetEl.parentNode.parentNode.parentNode === this) {
+                    return;
+                }
             }
             my.initVideoSettings("out", videoImgEl);
             evt.stopPropagation();
@@ -506,7 +564,6 @@
             var videoEls,
                 videoElsMaxIndex,
                 videoEl,
-                videoParentEl,
                 i,
                 wasParsed;
             if (!eventOnEl) {
@@ -525,8 +582,7 @@
                     videoEl.addEventListener("mouseover", my.mouseEnterVideo, false);
                     videoEl.addEventListener("mouseout", my.mouseExitVideo, false);
                     if (my.settings[PROPR_VIEW_RATING]) {
-                        videoParentEl = videoEl.parentNode;
-                        my.testVideoForRating(videoParentEl);
+                        my.testVideoForRating(videoEl);
                     }
                 }
             }
