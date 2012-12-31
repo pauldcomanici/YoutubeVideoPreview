@@ -2,6 +2,8 @@
     "name": "youtubevideopreview", 
     "fullName": "Youtube Video Preview",
     "description": "Youtube Video Preview",
+    "homepage": "https://github.com/darkyndy/YoutubeVideoPreview",
+    "icon": "ytpreview48.png",
     "license": "MPL 2.0", 
     "author": "Paul Comanici (darkyndy)", 
     "version": "0.1",  

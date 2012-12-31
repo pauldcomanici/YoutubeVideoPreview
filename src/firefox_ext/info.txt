@@ -1,0 +1,21 @@
+When there will an API for storage management with update events then I could add in package.json:
+
+=====
+	"preferences": [
+		{
+			"name": "imageTime",
+			"title": "Rotate speed",
+			"description": "Time in milliseconds for changing video thumbnail",
+			"type": "integer",
+			"value": 1000
+		},
+		{
+			"name": "viewRatingEnabled",
+			"title": "Show rating preview",
+			"description": "Do you want to see rating bellow video?",
+			"type": "bool",
+			"value": true
+		}
+	]
+
+=====
