@@ -1,5 +1,9 @@
 /**
- * Youtube Preview
+ * Youtube Video Preview
+ * @author Paul Comanici (darkyndy) <darkyndy@gmail.com>
+ * @requires DyDomHelper
+ * @requires ytConst.js
+ * 
  */
 /*jslint browser: true, devel: true */
 (function () {
@@ -14,6 +18,8 @@
         maxTestNr: 5, //maximum number of test to be executed on element
         hoverTimer: null, //timer when hovering image
         hoverVideoId: "", //video id of hovering image
+        videoImgIdNr: 1, //unique number that will be added to image id attribute
+        videoImgData: {}, //object with video images data
         videoSelector: "video-thumb", //CSS class name for elements that contain video thumbnails
         videoIdReg: "([a-z0-9-_=]+)", //regular expression for video id
         ratingAddedCssClass: "", //css class added to elements that contain video and they have rating
@@ -31,13 +37,6 @@
             //propr = propr.charAt(0).toUpperCase() + propr.substr(1, propr.length);
             proprName = my.usedPrefix + propr;
             return proprName;
-        },
-        /**
-         * @description Get dataset property name based on property
-         * @param {String} propr
-         */
-        getDatasetPropr: function getDatasetPropr(propr) {
-            return my.getProprName(propr);
         },
         /**
          * @description Filter CSS property by setting to integer
@@ -314,22 +313,27 @@
          * 
          * @description Set default image
          * @param {HTMLElement} imgEl
+         * @param {String} videoId
+         * @param {String} videoImgElId
          */
-        setDefaultImg: function setDefaultImg(imgEl, videoId) {
-            var imgData = imgEl.dataset,
-                newImgPath = "";
-            newImgPath = my.defaultImgPath + videoId + "/" + imgData[my.getDatasetPropr("ImgDefault")] + my.imgExt;
+        setDefaultImg: function setDefaultImg(imgEl, videoId, videoImgElId) {
+            var imgData,
+                newImgPath;
+            imgData = my.videoImgData[videoImgElId];
+            newImgPath = my.defaultImgPath + videoId + "/" + imgData.imgDefault + my.imgExt;
             imgEl.setAttribute("src", newImgPath);
-            DyDomHelper.setCss(imgEl, {"width": imgData[my.getDatasetPropr("ImgWidth")], "top": ""});
-            imgData[my.getDatasetPropr("ImgIndex")] = 0;
+            DyDomHelper.setCss(imgEl, {"width": imgData.imgWidth, "top": ""});
+            imgData.imgIndex = 0;
             window.clearTimeout(my.hoverTimer);
         },
         /**
          * 
          * @description Switch image for video preview
          * @param {HTMLElement} imgEl
+         * @param {String} videoId
+         * @param {String} videoImgElId
          */
-        switchVideoImg: function switchVideoImg(imgEl, videoId) {
+        switchVideoImg: function switchVideoImg(imgEl, videoId, videoImgElId) {
             var imgData,
                 imgId,
                 newImgPath,
@@ -343,18 +347,13 @@
             if (my.hoverVideoId !== videoId) {
                 if (my.hoverVideoId === "") {
                     //this means that rotate image was in loop
-                    my.setDefaultImg(imgEl, videoId);
+                    my.setDefaultImg(imgEl, videoId, videoImgElId);
                 } else {
                     videoId = my.hoverVideoId;
                 }
             }
-            imgData = imgEl.dataset;
-            imgId = imgData[my.getDatasetPropr("ImgIndex")];
-            imgId = parseInt(imgId, 10);
-            if (isNaN(imgId)) {
-                imgId = 0;
-            }
-            imgId = imgId + 1;
+            imgData = my.videoImgData[videoImgElId];
+            imgId = imgData.imgIndex + 1;
             if (imgId > 3) {
                 imgId = 1;
             }
@@ -375,9 +374,9 @@
                 if (updateCss) {
                     DyDomHelper.setCss(imgEl, setCss);
                 }
+                imgData.imgIndex = imgId;
+                my.hoverTimer = setTimeout(my.switchVideoImg, my.settings[PROPR_IMAGE_TIME], imgEl, videoId, videoImgElId);
             }
-            imgData[my.getDatasetPropr("ImgIndex")] = imgId;
-            my.hoverTimer = setTimeout(my.switchVideoImg, my.settings[PROPR_IMAGE_TIME], imgEl, videoId);
         },
         /**
          * 
@@ -386,35 +385,32 @@
          * @param {String} actType
          */
         testVideoImg: function testVideoImg(videoImgEl, actType) {
-            var testNr = 0,
+            var testNr,
+                testNrAttr,
                 initImgRegExp,
                 rezReg,
                 initImg,
-                useDefaultImage = my.defaultImg,
-                useWidth = my.defaultImgWidth,
                 regMatch,
                 videoId,
+                videoImgElId,
                 imgData;
-            imgData = videoImgEl.dataset;
-            testNr = imgData[my.getDatasetPropr("TestNr")];
-            if (testNr === undefined) {
+            testNrAttr = my.getProprName("TestNr");
+            testNr = videoImgEl.getAttribute(testNrAttr) || 0;
+            testNr = parseInt(testNr, 10);
+            if (isNaN(testNr)) {
                 testNr = 0;
-            } else {
-                testNr = parseInt(testNr, 10);
-                if (isNaN(testNr)) {
-                    testNr = 0;
-                }
             }
             testNr = testNr + 1;
             if (my.maxTestNr > testNr) {
-                imgData[my.getDatasetPropr("TestNr")] = testNr;
+                //if we didn't reached maximum number of tests
+                videoImgEl.setAttribute(testNrAttr, testNr);
                 regMatch = false;
                 initImgRegExp = new RegExp("vi\\/" + my.videoIdReg + "\\/([a-z]*)(default)\\.", "i");
                 initImg = videoImgEl.getAttribute("src");
                 if (initImg.match(initImgRegExp)) {
                     regMatch = true;
                 } else {
-                    initImg = imgData.thumb;
+                    initImg = videoImgEl.getAttribute("data-thumb");
                     if (initImg && initImg.match(initImgRegExp)) {
                         regMatch = true;
                     }
@@ -422,24 +418,37 @@
                 if (regMatch) {
                     rezReg = initImgRegExp.exec(initImg);
                     if (rezReg.length === 4) {
-                        useDefaultImage = rezReg[2] + rezReg[3];
                         videoId = rezReg[1];
-                        useWidth = DyDomHelper.getCssProp(videoImgEl, "width");
-                        imgData[my.getDatasetPropr("VideoId")] = videoId;
-                        imgData[my.getDatasetPropr("ImgIndex")] = 0;
-                        imgData[my.getDatasetPropr("ImgDefault")] = useDefaultImage;
-                        imgData[my.getDatasetPropr("ImgWidth")] = useWidth;
-                        imgData[my.getDatasetPropr("Parsed")] = true;
                         if (videoId !== "undefined") {
-                            my.initVideoSettings("in", videoImgEl);
+                            //continue only if videoId is not "undefined"
+                            videoImgElId = videoImgEl.getAttribute("id"); //get image element id attribute
+                            if (!videoImgElId) {
+                                //if image element doesn't have id attribute then generete and add one
+                                videoImgElId = my.getProprName("Id" + my.videoImgIdNr);
+                                my.videoImgIdNr += 1;
+                                videoImgEl.setAttribute("id", videoImgElId);
+                            }
+                            //build object with video data
+                            imgData = {};
+                            imgData.videoId = videoId;
+                            imgData.imgIndex = 0;
+                            imgData.imgDefault = rezReg[2] + rezReg[3];
+                            imgData.imgWidth = DyDomHelper.getCssProp(videoImgEl, "width");
+                            my.videoImgData[videoImgElId] = imgData;
+                            videoImgEl.setAttribute(my.getProprName("Parsed"), "true");
+                            my.initVideoSettings(actType, videoImgEl);
                         }
                     }
                 } else {
-                    //console.log("no match at reg for: "+initImg+" , testNr: "+testNr);
+                    //console.log("no match at reg for: " + initImg + " , testNr: " + testNr);
+                    //try again image test
                     setTimeout(my.testVideoImg, 100, videoImgEl, actType);
                 }
-            } else if (my.maxTestNr >= testNr) {
-                imgData[my.getDatasetPropr("TestNr")] = testNr + 1;
+            } else {
+                if (my.maxTestNr >= testNr) {
+                    testNr += 1;
+                    videoImgEl.setAttribute(testNrAttr, testNr);
+                }
             }
         },
         /**
@@ -452,28 +461,31 @@
             var imgData,
                 settingsParsed,
                 parsedAttr,
-                videoId;
-            imgData = videoImgEl.dataset;
-            parsedAttr = my.getDatasetPropr("Parsed");
-            settingsParsed = imgData[parsedAttr];
+                videoId,
+                videoImgElId;
+            parsedAttr = my.getProprName("Parsed");
+            settingsParsed = videoImgEl.getAttribute(parsedAttr);
             if (settingsParsed && (settingsParsed === "true" || settingsParsed === true)) {
                 settingsParsed = true;
             } else {
                 settingsParsed = false;
             }
-            imgData[parsedAttr] = settingsParsed;
             //console.log(settingsParsed);
             if (settingsParsed === true) {
-                videoId = imgData[my.getDatasetPropr("VideoId")];
-                if (actType === "in") {
-                    if (my.hoverVideoId !== videoId) {
-                        //we switched to another video images
-                        my.hoverVideoId = videoId;
-                        my.switchVideoImg(videoImgEl, videoId);
+                videoImgElId = videoImgEl.getAttribute("id");
+                if (videoImgElId) {
+                    imgData = my.videoImgData[videoImgElId];
+                    videoId = imgData.videoId;
+                    if (actType === "in") {
+                        if (my.hoverVideoId !== videoId) {
+                            //we switched to another video images
+                            my.hoverVideoId = videoId;
+                            my.switchVideoImg(videoImgEl, videoId, videoImgElId);
+                        }
+                    } else {
+                        my.setDefaultImg(videoImgEl, videoId, videoImgElId);
+                        my.hoverVideoId = "";
                     }
-                } else {
-                    my.setDefaultImg(videoImgEl, videoId);
-                    my.hoverVideoId = "";
                 }
             } else {
                 my.testVideoImg(videoImgEl, actType);
@@ -498,7 +510,7 @@
          * @param {Event} evt
          */
         mouseExitVideo: function mouseExitVideo(evt) {
-            var videoImgEl = this.querySelector("img"),
+            var videoImgEl,
                 targetEl;
             //console.log('hover out');
             targetEl = evt.toElement || evt.relatedTarget;
@@ -509,6 +521,7 @@
                     return;
                 }
             }
+            videoImgEl = this.querySelector("img");
             my.initVideoSettings("out", videoImgEl);
             evt.stopPropagation();
         },
