@@ -13,6 +13,7 @@
     },
     "content_scripts": [
         {
+			"css": ["css/ytvpStyle.css"],
             "js": [ "js/ytConst.js", "js/dyDomHelper.js", "js/ytVideoPreview.js" ],
             "matches": [ "http://www.youtube.com/*", "https://www.youtube.com/*" ],
             "run_at": "document_end"
