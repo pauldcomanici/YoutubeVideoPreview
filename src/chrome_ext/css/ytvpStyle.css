@@ -21,7 +21,7 @@
 .ytVideoPreview-ratingContainer .ytVideoPreview-ratingDislikes {
 	background: rgb(255, 0, 0);
 }
-.video-thumb.ux-thumb.ytVideoPreview-videoKnown  .ytVideoPreview-ratingContainer {
+.ytVideoPreview-ratingContainer {
 	width: 100%;
 }
 .yt-thumb-default-370 .ytVideoPreview-ratingContainer {
