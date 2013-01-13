@@ -1,0 +1,50 @@
+.ytVideoPreview-ratingActive .ytVideoPreview-ratingContainer {
+	display: block;
+}
+.ytVideoPreview-ratingContainer {
+	height: 4px;
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	bottom: 0;
+	top: auto;
+	left: 0;
+	display: none;
+}
+.ytVideoPreview-ratingContainer > div {
+	height: 4px;
+	float: left;
+}
+.ytVideoPreview-ratingContainer .ytVideoPreview-ratingLikes {
+	background: rgb(85, 153, 0);
+}
+.ytVideoPreview-ratingContainer .ytVideoPreview-ratingDislikes {
+	background: rgb(255, 0, 0);
+}
+.ytVideoPreview-ratingContainer {
+	width: 100%;
+}
+.yt-thumb-default-370 .ytVideoPreview-ratingContainer {
+	max-width: 370px;
+	width: 370px;
+}
+.yt-thumb-default-189 .ytVideoPreview-ratingContainer {
+	max-width: 189px;
+	width: 189px;
+}
+.yt-thumb-default-185 .ytVideoPreview-ratingContainer {
+	max-width: 185px;
+	width: 185px;
+}
+.yt-thumb-default-106 .ytVideoPreview-ratingContainer {
+	max-width: 106px;
+	width: 106px;
+}
+.yt-thumb-default-128 .ytVideoPreview-ratingContainer {
+	max-width: 128px;
+	width: 128px;
+}
+.yt-thumb-default-64 .ytVideoPreview-ratingContainer {
+	max-width: 64px;
+	width: 64px;
+}

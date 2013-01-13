@@ -606,6 +606,13 @@
                 }
             }
         },
+        setExtensionStyle: function (fileName) {
+            var stylesheet = document.createElement('link');
+            stylesheet.setAttribute('rel', 'stylesheet');
+            stylesheet.setAttribute('href', fileName);
+            stylesheet.setAttribute('type', 'text/css');
+            document.getElementsByTagName('head')[0].appendChild(stylesheet);
+        },
         /**
          * 
          * @description Called when a message is passed.
@@ -637,6 +644,8 @@
                         my.settings[proprName] = newValue;
                     } else if (message === "setSettings") {
                         my.parseResponseAtGetSettings(response);
+                    } else if (message === "setStyle") {
+                        my.setExtensionStyle(response.file);
                     }
                 }
             }
@@ -651,6 +660,7 @@
                 chrome.extension.sendMessage("getSettings");
                 chrome.extension.onMessage.addListener(my.onRequest);
             } else if (self) {
+                self.postMessage("getStyle");
                 self.postMessage("getSettings");
                 self.on("message", my.onRequest);
             }
