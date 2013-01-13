@@ -8,24 +8,24 @@
 /*jslint browser: true, devel: true */
 (function () {
     "use strict";
-    /*global setTimeout, DyDomHelper, XMLHttpRequest, ActiveXObject, chrome, self, PROPR_VIEW_RATING, PROPR_IMAGE_TIME */
+    /*global setTimeout, DyDomHelper, XMLHttpRequest, chrome, self, PROPR_VIEW_RATING, PROPR_IMAGE_TIME */
     var my;
     my = {
-        defaultImg: "default", //default image name
-        defaultImgWidth: 120, //default image with
-        imgExt: ".jpg", //default image extension
+        defaultImg: "default",        //default image name
+        defaultImgWidth: 120,         //default image with
+        imgExt: ".jpg",               //default image extension
         defaultImgPath: "http://i3.ytimg.com/vi/", //default image path
-        maxTestNr: 5, //maximum number of test to be executed on element
-        hoverTimer: null, //timer when hovering image
-        hoverVideoId: "", //video id of hovering image
-        videoImgIdNr: 1, //unique number that will be added to image id attribute
-        videoImgData: {}, //object with video images data
+        maxTestNr: 5,                 //maximum number of test to be executed on element
+        hoverTimer: null,             //timer when hovering image
+        hoverVideoId: "",             //video id of hovering image
+        videoImgIdNr: 1,              //unique number that will be added to image id attribute
+        videoImgData: {},             //object with video images data
         videoSelector: "video-thumb", //CSS class name for elements that contain video thumbnails
         videoIdReg: "([a-z0-9-_=]+)", //regular expression for video id
-        ratingAddedCssClass: "", //css class added to elements that contain video and they have rating
-        knownAddedCssClass: "", //css class added to elements that are known to have video, only if element was already parsed
+        ratingAddedCssClass: "",      //css class added to elements that contain video and they have rating
+        knownAddedCssClass: "",       //css class added to elements that are known to have video, only if element was already parsed
         validVideoCssClass: "YtPreviewValid", //css class added on img element, only for videos for thumbnail preview
-        settings: {}, //settings object for extension
+        settings: {},                         //settings object for extension
         usedPrefix: "ytVideoPreview", //prefix used for dataset
         /**
          * @description Get property name
@@ -340,7 +340,8 @@
                 imageWidth,
                 imageTop,
                 setCss,
-                updateCss = false;
+                updateCss = false,
+                imgComputedStyle;
             if (my.hoverTimer !== null) {
                 window.clearTimeout(my.hoverTimer);
             }
@@ -359,12 +360,13 @@
             }
             if (videoId) {
                 setCss = {};
-                imageWidth = DyDomHelper.getCssProp(imgEl, "width", true);
+                imgComputedStyle = window.getComputedStyle(imgEl, "");
+                imageWidth = parseInt(imgComputedStyle.getPropertyValue("width"), 10);
                 if (imageWidth !== my.defaultImgWidth) {
                     setCss.width = my.defaultImgWidth + "px";
                     updateCss = true;
                 }
-                imageTop = DyDomHelper.getCssProp(imgEl, "top", true);
+                imageTop = parseInt(imgComputedStyle.getPropertyValue("top"), 10);
                 if (imageTop < -12) {
                     setCss.top = 0;
                     updateCss = true;
