@@ -9,7 +9,7 @@
 		"ytpreview48.png"
 	],
     "background": {
-        "scripts": [ "js/ytConst.js", "js/ytStorage.js", "js/ytSettings.js", "js/background.js" ]
+        "page": "background.html"
     },
     "content_scripts": [
         {
