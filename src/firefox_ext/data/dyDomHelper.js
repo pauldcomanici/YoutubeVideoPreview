@@ -19,7 +19,7 @@ var DyDomHelper = (function () {
 			var cssProp;
 			asInt = asInt || false;
 			if (el && propr) {
-				cssProp = window.getComputedStyle(el, null).getPropertyValue(propr);
+				cssProp = window.getComputedStyle(el, "").getPropertyValue(propr);
 				if (asInt) {
 					cssProp = parseInt(cssProp, 10);
 					if (isNaN(cssProp)) {
