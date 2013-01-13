@@ -6,7 +6,14 @@
     "icon": "ytpreview48.png",
     "license": "MPL 2.0", 
     "author": "Paul Comanici (darkyndy)", 
-    "version": "0.1",  
+    "version": "0.2",  
     "id": "jid1-NmGcW6QjTAe4HA", 
-    "description": "YouTube Video Preview"
+    "preferences": [
+        {
+            "label": "view/change", 
+            "name": "ytvpSettings", 
+            "title": "Extension settings", 
+            "type": "control"
+        }
+    ]
 }
