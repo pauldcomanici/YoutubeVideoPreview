@@ -4,6 +4,7 @@
 (function () {
     "use strict";
 	/*global window, document, chrome, CustomEvent, DyDomHelper, PROPR_IMAGE_TIME, PROPR_VIEW_RATING, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM */
+    //TODO: improve perf by caching elements
     var my = {
 		/**
 		 * @description Retrieve background page
@@ -37,7 +38,6 @@
 			}
 		},
 		/**
-		 * 
 		 * @description Update time value
 		 * @param {Number} val
 		 */
@@ -46,7 +46,6 @@
 			rangeValueEl.textContent = val;
 		},
 		/**
-		 * 
 		 * @description Function executed when rotate time is changed
 		 */
 		onChangeRotateTime: function onChangeRotateTime() {
@@ -56,11 +55,10 @@
 			my.updatePropr(PROPR_IMAGE_TIME, initTime);
 		},
 		/**
-		 * 
 		 * @description Setup input range for time
 		 * @param {Number} defaultVal
 		 */
-		setupInputRange: function setupInputRange(defaultVal) {
+		setupRotateSpeed: function setupRotateSpeed(defaultVal) {
 			var inputRangeEl,
 				inputRangeAttr;
 			inputRangeEl = document.getElementById("imageTime");
@@ -73,6 +71,41 @@
 			inputRangeEl.value = defaultVal;
 			inputRangeEl.addEventListener("change", my.onChangeRotateTime, false);
 			my.updateTimeValue(defaultVal);
+		},
+        /**
+         * @description Update rating height value
+         * @param {Number} val
+         */
+        updateRatingHeightValue: function updateRatingHeightValue(val) {
+            var rangeValueEl = document.getElementById("ratingHeightValue");
+            rangeValueEl.textContent = val;
+        },
+        /**
+         * @description Function executed when rating height is changed
+         */
+        onChangeRatingHeight: function onChangeRatingHeight() {
+            var newVal;
+            newVal = parseInt(this.value, 10);
+            my.updateRatingHeightValue(newVal);
+            my.updatePropr(PROPR_RATING_HEIGHT, newVal);
+        },
+		/**
+		 * @description Setup input range for rating height
+		 * @param {Number} defaultVal
+		 */
+		setupRatingHeight: function setupRatingHeight(defaultVal) {
+			var inputRangeEl,
+				inputRangeAttr;
+			inputRangeEl = document.getElementById("ratingHeight");
+			inputRangeAttr = {
+				"min": 3,
+				"max": 7,
+				"step": 1
+			};
+			DyDomHelper.setAttr(inputRangeEl, inputRangeAttr);
+			inputRangeEl.value = defaultVal;
+			inputRangeEl.addEventListener("change", my.onChangeRatingHeight, false);
+			my.updateRatingHeightValue(defaultVal);
 		},
 		/**
 		 * 
@@ -182,7 +215,8 @@
 		initCb: function initCb(evt) {
 			var settings;
 			settings = evt.detail.newValue;
-			my.setupInputRange(settings[PROPR_IMAGE_TIME]);
+			my.setupRotateSpeed(settings[PROPR_IMAGE_TIME]);
+			my.setupRatingHeight(settings[PROPR_RATING_HEIGHT]);
 			my.setupViewRating(settings[PROPR_VIEW_RATING]);
 			my.setupShowIcon(settings[PROPR_SHOW_ICON]);
 			my.setupHideIconConfirm(settings[PROPR_HIDE_ICON_CONFIRM]);

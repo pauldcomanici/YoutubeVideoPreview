@@ -2,7 +2,6 @@
 	display: block;
 }
 .ytVideoPreview-ratingContainer {
-	height: 4px;
 	margin: 0;
 	padding: 0;
 	position: absolute;
@@ -10,9 +9,9 @@
 	top: auto;
 	left: 0;
 	display: none;
+    width: 100%;
 }
 .ytVideoPreview-ratingContainer > div {
-	height: 4px;
 	float: left;
 }
 .ytVideoPreview-ratingContainer .ytVideoPreview-ratingLikes {
@@ -21,8 +20,25 @@
 .ytVideoPreview-ratingContainer .ytVideoPreview-ratingDislikes {
 	background: rgb(255, 0, 0);
 }
-.ytVideoPreview-ratingContainer {
-	width: 100%;
+/*rating bar height, by default is 4px*/
+.ytVideoPreview-ratingHeight4, .ytVideoPreview-ratingHeight4 > div {
+    height: 4px;
+}
+/*rating bar height, custom classes for perf, 3px*/
+.ytVideoPreview-ratingHeight3, .ytVideoPreview-ratingHeight3 > div {
+    height: 3px;
+}
+/*rating bar height, custom classes for perf, 5px*/
+.ytVideoPreview-ratingHeight5, .ytVideoPreview-ratingHeight5 > div {
+    height: 5px;
+}
+/*rating bar height, custom classes for perf, 5px*/
+.ytVideoPreview-ratingHeight6, .ytVideoPreview-ratingHeight6 > div {
+    height: 6px;
+}
+/*rating bar height, custom classes for perf, 5px*/
+.ytVideoPreview-ratingHeight7, .ytVideoPreview-ratingHeight7 > div {
+    height: 7px;
 }
 .yt-thumb-default-370 .ytVideoPreview-ratingContainer {
 	max-width: 370px;

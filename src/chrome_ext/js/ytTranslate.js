@@ -34,6 +34,8 @@
 		addLocalization("page_options", "options");
 		addLocalization("imageTimeLabel", "imageTimeLabel");
 		addLocalization("imageTimeUnit", "imageTimeDescription");
+		addLocalization("ratingHeightLabel", "ratingHeightLabel");
+		addLocalization("ratingHeightUnit", "ratingHeightDescription");
 		addLocalization("enableRatingViewLabel", "enableRatingViewLabel");
 		addLocalization("enableRatingViewTrue", "enableRatingViewTrue");
 		addLocalization("enableRatingViewFalse", "enableRatingViewFalse");

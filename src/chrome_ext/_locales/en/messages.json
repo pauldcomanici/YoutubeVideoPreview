@@ -30,8 +30,6 @@
     "no": {
         "message": "no"
     },
-    /* END general strings */
-    /* START site.html strings */
     "about": {
         "message": "about"
     },
@@ -49,6 +47,12 @@
     },
     "imageTimeDescription": {
         "message": "milliseconds (1000 milliseconds = 1 second)"
+    },
+    "ratingHeightLabel": {
+        "message": "Rating bar height:"
+    },
+    "ratingHeightDescription": {
+        "message": "px"
     },
     "enableRatingViewLabel": {
         "message": "Rating preview:"
@@ -72,8 +76,7 @@
         "message": "Everything is automatically saved at change"
     },
     "feedbackPage": {
-        "message": "<p>$question$</p><br><p>$issue$</p><br>
-                <p>$suggestion$</p><br>$contact1$<br>$contact2$",
+        "message": "<p>$question$</p><br><p>$issue$</p><br><p>$suggestion$</p><br>$contact1$<br>$contact2$",
         "placeholders": {
             "question": {
                 "content": "Do you have a question?"
@@ -141,8 +144,6 @@
     "siteAboutCode": {
         "message": "Extension source code is available at <a href=\"https://github.com/darkyndy/YoutubeVideoPreview/tree/master/src/chrome_ext\" target=\"_blank\">Github</a>:"
     },
-    /* END site.html strings */
-    /* START popup.html strings */
     "popupOptions": {
         "message": "Options..."
     },
@@ -164,7 +165,6 @@
     "popupHideIconOptionsInfoPath": {
         "message": "Tools > Extensions > Youtube video preview > Options"
     },
-    /* END popup.html strings */
     "dummy": {
         "message": "dummy"
     }

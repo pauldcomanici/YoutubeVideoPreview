@@ -13,8 +13,7 @@
     my = {
         defaultImg: "default",        //default image name
         defaultImgWidth: 120,         //default image with
-        imgExt: ".jpg",               //default image extension
-        defaultImgPath: "http://i3.ytimg.com/vi/", //default image path
+        baseImgPath: "http://i3.ytimg.com/vi", //base image path
         maxTestNr: 5,                 //maximum number of test to be executed on element
         hoverTimer: null,             //timer when hovering image
         hoverVideoId: "",             //video id of hovering image
@@ -77,7 +76,7 @@
                     negativeRatio = 100 - positiveRatio;
                     negativeRatio = Math.round(negativeRatio * 100) / 100;
                     ratingEl = DyDomHelper.createEl("div",
-                            {"class": my.getProprName("-ratingContainer")});
+                            {"class": my.getProprName("-ratingContainer") + " " + my.getProprName("-ratingHeight" + my.settings[PROPR_RATING_HEIGHT]) });
                     ratingElHtml = '<DIV ' +
                         'class="' + my.getProprName("-ratingLikes") + '" ' +
                         'title="' + likes + ' likes from ' + ratingCount + ' rating (' + positiveRatio + '%)' + '" ' +
@@ -309,6 +308,9 @@
                 }
             }
         },
+        getNewImagePath: function getNewImagePath(imgData, videoId, imgName) {
+            return my.baseImgPath + imgData.pathData + "/" + videoId + "/" + imgName + imgData.imgExt;
+        },
         /**
          * 
          * @description Set default image
@@ -317,14 +319,15 @@
          * @param {String} videoImgElId
          */
         setDefaultImg: function setDefaultImg(imgEl, videoId, videoImgElId) {
-            var imgData,
-                newImgPath;
+            var imgData;
             imgData = my.videoImgData[videoImgElId];
-            newImgPath = my.defaultImgPath + videoId + "/" + imgData.imgDefault + my.imgExt;
-            imgEl.setAttribute("src", newImgPath);
-            DyDomHelper.setCss(imgEl, {"width": imgData.imgWidth, "top": ""});
-            imgData.imgIndex = 0;
-            window.clearTimeout(my.hoverTimer);
+            if (imgData) {
+                //only if we have data stored for video
+                imgEl.setAttribute("src", my.getNewImagePath(imgData, videoId, imgData.imgDefault));
+                DyDomHelper.setCss(imgEl, {"width": imgData.imgWidth, "top": ""});
+                imgData.imgIndex = 0;
+                window.clearTimeout(my.hoverTimer);
+            }
         },
         /**
          * 
@@ -336,7 +339,6 @@
         switchVideoImg: function switchVideoImg(imgEl, videoId, videoImgElId) {
             var imgData,
                 imgId,
-                newImgPath,
                 imageWidth,
                 imageTop,
                 setCss,
@@ -371,14 +373,16 @@
                     setCss.top = 0;
                     updateCss = true;
                 }
-                newImgPath = my.defaultImgPath + videoId + "/" + imgId + my.imgExt;
-                imgEl.setAttribute("src", newImgPath);
+                imgEl.setAttribute("src", my.getNewImagePath(imgData, videoId, imgId));
                 if (updateCss) {
                     DyDomHelper.setCss(imgEl, setCss);
                 }
                 imgData.imgIndex = imgId;
                 my.hoverTimer = setTimeout(my.switchVideoImg, my.settings[PROPR_IMAGE_TIME], imgEl, videoId, videoImgElId);
             }
+        },
+        testVideoImageForMatch: function () {
+
         },
         /**
          * 
@@ -387,9 +391,9 @@
          * @param {String} actType
          */
         testVideoImg: function testVideoImg(videoImgEl, actType) {
-            var testNr,
+            var testNr,              //store number of tests made for a specific video
                 testNrAttr,
-                initImgRegExp,
+                initImgRegExp,       //reg exp to find videoId, for jpg image
                 rezReg,
                 initImg,
                 regMatch,
@@ -406,9 +410,10 @@
             if (my.maxTestNr > testNr) {
                 //if we didn't reached maximum number of tests
                 videoImgEl.setAttribute(testNrAttr, testNr);
-                regMatch = false;
-                initImgRegExp = new RegExp("vi\\/" + my.videoIdReg + "\\/([a-z]*)(default)\\.", "i");
                 initImg = videoImgEl.getAttribute("src");
+                regMatch = false;
+                //default reg exp for a video thumb
+                initImgRegExp = new RegExp("vi(_webp)*\\/" + my.videoIdReg + "\\/([a-z]*)(default)\\.([a-z]+)*", "i");
                 if (initImg.match(initImgRegExp)) {
                     regMatch = true;
                 } else {
@@ -419,8 +424,8 @@
                 }
                 if (regMatch) {
                     rezReg = initImgRegExp.exec(initImg);
-                    if (rezReg.length === 4) {
-                        videoId = rezReg[1];
+                    if (rezReg.length === 6) {
+                        videoId = rezReg[2];
                         if (videoId !== "undefined") {
                             //continue only if videoId is not "undefined"
                             videoImgElId = videoImgEl.getAttribute("id"); //get image element id attribute
@@ -433,9 +438,11 @@
                             //build object with video data
                             imgData = {};
                             imgData.videoId = videoId;
+                            imgData.pathData = rezReg[1] || "";
                             imgData.imgIndex = 0;
-                            imgData.imgDefault = rezReg[2] + rezReg[3];
+                            imgData.imgDefault = rezReg[3] + rezReg[4];
                             imgData.imgWidth = DyDomHelper.getCssProp(videoImgEl, "width");
+                            imgData.imgExt = "." + rezReg[5];
                             my.videoImgData[videoImgElId] = imgData;
                             videoImgEl.setAttribute(my.getProprName("Parsed"), "true");
                             my.initVideoSettings(actType, videoImgEl);

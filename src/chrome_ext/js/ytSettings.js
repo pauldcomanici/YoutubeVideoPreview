@@ -24,18 +24,16 @@ var YtSettings = (function () {
 		 */
 		filterBool: function filterBool(val) {
 			if (val === false || val === "false") {
-				val = false;
-			} else {
-				val = true;
+				return false;
 			}
-			return val;
+            return true;
 		},
 		/**
 		 * 
 		 * @description Filter property
-		 * @param proprName
-		 * @param proprVal
-		 * @returns
+		 * @param {String} proprName
+		 * @param {String|Number|Boolean} proprVal
+		 * @returns {String|Number|Boolean}
 		 */
 		filterPropr: function (proprName, proprVal) {
 			var boolPropr,
@@ -47,7 +45,7 @@ var YtSettings = (function () {
 				if (proprNameIndex > -1) {
 					proprVal = my.filterBool(proprVal);
 				} else {
-					intPropr = [PROPR_IMAGE_TIME];
+					intPropr = [PROPR_IMAGE_TIME, PROPR_RATING_HEIGHT];
 					proprNameIndex = intPropr.indexOf(proprName);
 					if (proprNameIndex > -1) {
 						proprVal = parseInt(proprVal, 10);
@@ -80,7 +78,7 @@ var YtSettings = (function () {
 		},
 		/**
 		 * @description At properties initialization callback
-		 * @param items
+		 * @param {Object} items
 		 */
 		initCb: function getAllCb(items) {
 			var proprName;
@@ -105,7 +103,8 @@ var YtSettings = (function () {
 			my.propr[PROPR_VIEW_RATING] = true;
 			my.propr[PROPR_SHOW_ICON] = true;
 			my.propr[PROPR_HIDE_ICON_CONFIRM] = true;
-			proprNames = [PROPR_IMAGE_TIME, PROPR_VIEW_RATING, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM];
+			my.propr[PROPR_RATING_HEIGHT] = 4;
+			proprNames = [PROPR_IMAGE_TIME, PROPR_VIEW_RATING, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM, PROPR_RATING_HEIGHT];
 			YtStorage.getAll(proprNames, my.initCb);
 		},
 		/**

@@ -30,8 +30,6 @@
     "no": {
         "message": "nu"
     },
-    /* END general strings */
-    /* START site.html strings */
     "about": {
         "message": "despre"
     },
@@ -49,6 +47,12 @@
     },
     "imageTimeDescription": {
         "message": "milisecunde (1000 milisecunde = 1 secunda)"
+    },
+    "ratingHeightLabel": {
+        "message": "Inaltimea barei de rating:"
+    },
+    "ratingHeightDescription": {
+        "message": "px"
     },
     "enableRatingViewLabel": {
         "message": "Vizualizare rating:"
@@ -72,8 +76,7 @@
         "message": "Totul este salvat automat la schimbare"
     },
     "feedbackPage": {
-        "message": "<p>$question$</p><br><p>$issue$</p><br>
-                <p>$suggestion$</p><br>$contact1$<br>$contact2$",
+        "message": "<p>$question$</p><br><p>$issue$</p><br><p>$suggestion$</p><br>$contact1$<br>$contact2$",
         "placeholders": {
             "question": {
                 "content": "Ai intrebari?"
@@ -141,8 +144,6 @@
     "siteAboutCode": {
         "message": "Codul extensiei il poti gasi la: <a href=\"https://github.com/darkyndy/YoutubeVideoPreview/tree/master/src/chrome_ext\" target=\"_blank\">Github</a>:"
     },
-    /* END site.html strings */
-    /* START popup.html strings */
     "popupOptions": {
         "message": "Optiuni..."
     },
@@ -164,7 +165,6 @@
     "popupHideIconOptionsInfoPath": {
         "message": "Tools > Extensions > Youtube video preview > Options"
     },
-    /* END popup.html strings */
     "dummy": {
         "message": "dummy"
     }
