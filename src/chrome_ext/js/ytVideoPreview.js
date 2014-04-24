@@ -19,13 +19,27 @@
         hoverVideoId: "",             //video id of hovering image
         videoImgIdNr: 1,              //unique number that will be added to image id attribute
         videoImgData: {},             //object with video images data
-        videoSelector: "video-thumb", //CSS class name for elements that contain video thumbnails
         videoIdReg: "([a-z0-9-_=]+)", //regular expression for video id
         ratingAddedCssClass: "",      //css class added to elements that contain video and they have rating
         knownAddedCssClass: "",       //css class added to elements that are known to have video, only if element was already parsed
         validVideoCssClass: "YtPreviewValid", //css class added on img element, only for videos for thumbnail preview
         settings: {},                         //settings object for extension
         usedPrefix: "ytVideoPreview", //prefix used for dataset
+        appendRatingObj: {},
+        debounce: function debounce(func, wait) {
+            var timeout;
+            return function () {
+                var context = this;
+                clearTimeout(timeout);
+                timeout = setTimeout(function() {
+                    timeout = null;
+                    func.apply(context, []);
+                }, wait);
+                if (!timeout) {
+                    func.apply(context, []);
+                }
+            };
+        },
         /**
          * @description Get property name
          *   This is used to add prefix for each property so will not break YouTube UI
@@ -48,28 +62,19 @@
             }
             return propVal;
         },
-        /**
-         * 
-         * @description Add video rating
-         * @param resp
-         * @param {HTMLElement} parentEl
-         */
-        appendRating: function appendRating(resp, parentEl) {
+        populateVideoRating: function (respData) {
             var positiveRatio,
                 negativeRatio,
                 ratingEl,
                 ratingElHtml,
                 likes,
-                ratingCount;
-            try {
-                resp = JSON.parse(resp);
-            } catch (ex) {
-                //console.log(ex.message);
-            }
-            if (resp && resp.data && parentEl) {
-                //response has data
-                likes = parseInt(resp.data.likeCount, 10); //be sure is integer
-                ratingCount = parseInt(resp.data.ratingCount, 10); //be sure is integer
+                dislikes,
+                ratingCount,
+                parentEl;
+            if (respData && respData.id) {
+                likes = parseInt(respData.likeCount, 10); //be sure is integer
+                dislikes = parseInt(respData.dislikeCount, 10); //be sure is integer
+                ratingCount = likes + dislikes;
                 if (!isNaN(likes) && !isNaN(ratingCount) && ratingCount > 0) {
                     positiveRatio = likes * 100 / ratingCount;
                     positiveRatio = Math.round(positiveRatio * 100) / 100;
@@ -86,7 +91,38 @@
                         'title="dislikes: ' + negativeRatio + '%' + '" ' +
                         'style="width: ' + negativeRatio + '%"></DIV>';
                     ratingEl.innerHTML = ratingElHtml;
+                    parentEl = my.appendRatingObj[respData.id];
+                    //once retrieved delete it
+                    my.appendRatingObj[respData.id] = undefined;
                     parentEl.appendChild(ratingEl); //now add rating in page
+                }
+            }
+        },
+        /**
+         * 
+         * @description Add video rating
+         * @param {Object} resp
+         * @param {HTMLElement} parentEl
+         */
+        appendRating: function appendRating(resp) {
+            var respData,
+                i,
+                respItemsLength;
+            try {
+                resp = JSON.parse(resp);
+            } catch (ex) {
+                //console.log(ex.message);
+            }
+            if (resp && resp.items && resp.items.length > 0) {
+                //response has video items
+                respItemsLength = resp.items.length;
+                for (i = 0; i < respItemsLength; i += 1) {
+                    respData = {};
+                    respData.id = resp.items[i].id;
+                    respData.likeCount = resp.items[i].statistics.likeCount;
+                    respData.dislikeCount = resp.items[i].statistics.dislikeCount;
+                    //now set rating for video
+                    my.populateVideoRating(respData);
                 }
             }
         },
@@ -103,7 +139,7 @@
         doAjaxRequest: function doAjaxRequest(reqMethod, reqUrl, reqData, cbParams, successFn, errorFn) {
             var xhr,
                 aSync = true,
-                noCache = true,
+                noCache = false,
                 concatString;
             cbParams = cbParams || [];
             try {
@@ -159,15 +195,26 @@
         /**
          * 
          * @description Retrieve video data
-         * @param {String} videoId
-         * @param {HTMLElement} parentEl
          */
-        retrieveVideoData: function retrieveVideoData(videoId, parentEl) {
+        retrieveVideoData: function retrieveVideoData() {
             var reqUrl,
-                reqData;
-            reqUrl = "http://gdata.youtube.com/feeds/api/videos/" + videoId;
-            reqData = "v=2&prettyprint=false&alt=jsonc";
-            my.doAjaxRequest("GET", reqUrl, reqData, [parentEl], my.appendRating);
+                reqData,
+                videoIds,
+                videoIdsString,
+                tempVideoIds;
+            videoIds = Object.keys(my.appendRatingObj);
+            if (videoIds.length > 0) {
+                //API doesn't support more then 50 id's so make sure to send maximum 50
+                do {
+                    tempVideoIds = videoIds.splice(0, 50);
+                    videoIdsString = tempVideoIds.join(",");
+                    reqUrl = "https://www.googleapis.com/youtube/v3/videos/";
+                    reqData = "part=statistics&id=" + videoIdsString + "&key=AIzaSyAKHgX0wWr82Ko24rnJSBqs8FFvHns21a4";
+                    my.doAjaxRequest("GET", reqUrl, reqData, [], my.appendRating);
+                } while (videoIds.length !== 0);
+            }
+            //reqUrl = "http://gdata.youtube.com/feeds/api/videos/" + videoId;
+            //reqData = "v=2&prettyprint=false&alt=jsonc";
         },
         /**
          * 
@@ -196,6 +243,41 @@
             return videoId;
         },
         /**
+         *
+         */
+        testVideoForRating1: function (videoMatch, nodeName, nodeClassList, asNewRelated) {
+            //TODO: re-test YouTube to see easier method
+            asNewRelated = asNewRelated || false;
+            if (nodeName === "A") {
+                if (nodeClassList.contains("related-video") ||
+                        nodeClassList.contains("video-list-item-link") ||
+                        nodeClassList.contains("related-playlist")) {
+                    if (asNewRelated) {
+                        videoMatch.isCase6 = true;
+                    } else {
+                        videoMatch.isCase1 = true;
+                    }
+                } else {
+                    if (nodeClassList.contains("yt-uix-sessionlink")) {
+                        if (asNewRelated) {
+                            videoMatch.isCase7 = true;
+                        } else {
+                            videoMatch.isCase2 = true;
+                        }
+                    } else {
+                        if (nodeClassList.contains("yt-uix-contextlink")) {
+                            if (asNewRelated) {
+                                videoMatch.isCase8 = true;
+                            } else {
+                                videoMatch.isCase3 = true;
+                            }
+                        }
+                    }
+                }
+            }
+            return videoMatch;
+        },
+        /**
          * 
          * @description Test if rating was already applied to video
          *              and if not then apply it
@@ -213,11 +295,9 @@
                 videoLink = "",
                 videoRegRez,
                 videoIdRegExp,
-                isCase1 = false,
-                isCase2 = false,
-                isCase3 = false,
-                isCase4 = false,
-                isCase5 = false,
+                videoMatch = {
+                },
+                matchesCaseKey,
                 parentEl, //element where rating element will be inserted
                 nodeClassList;
             if (videoEl && videoEl.parentNode) {
@@ -233,43 +313,35 @@
                         nodeClassList = parentEl.classList;
                         if (nodeName === "DIV") {
                             if (nodeClassList.contains("thumb-container")) {
-                                isCase4 = true;
+                                videoMatch.isCase4 = true;
                             }
                         } else {
-                            if (nodeName === "A") {
-                                if (nodeClassList.contains("related-video") ||
-                                        nodeClassList.contains("video-list-item-link") ||
-                                        nodeClassList.contains("related-playlist")) {
-                                    isCase1 = true;
-                                } else {
-                                    if (nodeClassList.contains("yt-uix-sessionlink")) {
-                                        isCase2 = true;
-                                    } else {
-                                        if (nodeClassList.contains("yt-uix-contextlink")) {
-                                            isCase3 = true;
-                                        }
-                                    }
-                                }
-                            }
+                            videoMatch = my.testVideoForRating1(videoMatch, nodeName, nodeClassList);
                         }
                     }
                 } else {
                     if (nodeName === "A" && nodeClassList.length === 2 &&
                             nodeClassList.contains("yt-uix-sessionlink") &&
                             nodeClassList.contains("yt-uix-contextlink")) {
-                        isCase5 = true;
+                        videoMatch.isCase5 = true;
+                    } else {
+                        videoMatch = my.testVideoForRating1(videoMatch, nodeName, nodeClassList, true);
                     }
                 }
-                if (isCase1 || isCase2 || isCase3 || isCase4 || isCase5) {
-                    //console.log(parentEl);
-                    continueTest = true;
-                    if (isCase2) {
-                        parentEl = parentEl.parentNode;
+                for (matchesCaseKey in videoMatch) {
+                    if (videoMatch.hasOwnProperty(matchesCaseKey)) {
+                        if (videoMatch[matchesCaseKey]) {
+                            continueTest = true;
+                            break;
+                        }
                     }
                 }
             }
             if (continueTest) {
-            //one of cases is true
+                //one of cases is true
+                if (videoMatch.isCase2) {
+                    parentEl = parentEl.parentNode;
+                }
                 videoLink = parentEl.getAttribute("href");
                 if (videoLink && videoLink.length > 0) {
                     videoIdRegExp = new RegExp("v=" + my.videoIdReg, "i");
@@ -278,13 +350,17 @@
                         videoId = videoRegRez[1];
                     }
                 } else {
-                    if (isCase4) {
+                    if (videoMatch.isCase4) {
                         videoId = my.findVideoId(parentEl);
                     }
                 }
                 if (videoId) {
                     //console.log(videoId);
-                    my.retrieveVideoData(videoId, videoEl);
+                    if (videoMatch.isCase6) {
+                        parentEl = videoEl;
+                    }
+                    my.appendRatingObj[videoId] = parentEl;
+                    my.retrieveVideoDataDebounced();
                 }
             }
         },
@@ -343,7 +419,9 @@
                 imageTop,
                 setCss,
                 updateCss = false,
-                imgComputedStyle;
+                imgComputedStyle,
+                newImgSrc,
+                imgCached;
             if (my.hoverTimer !== null) {
                 window.clearTimeout(my.hoverTimer);
             }
@@ -361,6 +439,10 @@
                 imgId = 1;
             }
             if (videoId) {
+                if (imgData.correctExtension === false) {
+                    //if we couldn't find correct extension ... don't try any more
+                    return;
+                }
                 setCss = {};
                 imgComputedStyle = window.getComputedStyle(imgEl, "");
                 imageWidth = parseInt(imgComputedStyle.getPropertyValue("width"), 10);
@@ -373,7 +455,28 @@
                     setCss.top = 0;
                     updateCss = true;
                 }
-                imgEl.setAttribute("src", my.getNewImagePath(imgData, videoId, imgId));
+                newImgSrc = my.getNewImagePath(imgData, videoId, imgId);
+                imgEl.setAttribute("src", newImgSrc);
+                if (!imgData.correctExtension) {
+                    //start image caching, used for fixing image extension
+                    imgCached = new Image();
+                    imgCached.onload = function () {
+                        imgData.correctExtension = true;
+                    };
+                    imgCached.onerror = function () {
+                        if (imgData.imgExt === ".jpg") {
+                            imgData.imgExt = ".webp";
+                            imgData.pathData = "_webp";
+                        } else if (imgData.imgExt === ".webp") {
+                            imgData.imgExt = ".jpg";
+                            imgData.pathData = "";
+                        } else {
+                            imgData.correctExtension = false;
+                        }
+                    };
+                    imgCached.src = newImgSrc;
+                }
+                
                 if (updateCss) {
                     DyDomHelper.setCss(imgEl, setCss);
                 }
@@ -536,22 +639,14 @@
         },
         /**
          * 
-         * @description Attach mouse event for video
-         * @param eventOnEl
+         * @description Attach mouse event for video thumb
+         * @param {Array} videoEls
          */
-        delegateMouseEvt: function delegateMouseEvt(eventOnEl) {
-            var videoEls,
-                videoElsMaxIndex,
+        delegateOnVideoThumb: function (videoEls) {
+            var videoElsMaxIndex,
                 videoEl,
                 i,
                 wasParsed;
-            if (!eventOnEl) {
-                eventOnEl = document.getElementById("body-container");
-                if (!eventOnEl) {
-                    eventOnEl = document;
-                }
-            }
-            videoEls = eventOnEl.getElementsByClassName(my.videoSelector);
             videoElsMaxIndex = videoEls.length - 1;
             for (i = videoElsMaxIndex; i >= 0; i = i - 1) {
                 videoEl = videoEls[i];
@@ -568,6 +663,23 @@
                     }
                 }
             }
+        },
+        /**
+         * 
+         * @description Attach mouse event for video
+         * @param eventOnEl
+         */
+        delegateMouseEvt: function delegateMouseEvt(eventOnEl) {
+            if (!eventOnEl) {
+                eventOnEl = document.getElementById("body-container");
+                if (!eventOnEl) {
+                    eventOnEl = document;
+                }
+            }
+            
+            my.delegateOnVideoThumb(eventOnEl.getElementsByClassName("video-thumb"));
+            my.delegateOnVideoThumb(eventOnEl.getElementsByClassName("yt-uix-simple-thumb-wrap"));
+            
         },
         /**
          * 
@@ -677,8 +789,14 @@
          * @description Initialize extension properties
          */
         initPropr: function initPropr() {
+            var bodyEl;
             my.ratingAddedCssClass = my.getProprName("-ratingActive");
             my.knownAddedCssClass = my.getProprName("-videoKnown");
+            if (my.settings[PROPR_VIEW_RATING]) {
+                //ok, rating preview is enabled, add on body class for rating active
+                bodyEl = document.getElementsByTagName("body")[0];
+                bodyEl.classList.add(my.ratingAddedCssClass);
+            }
         },
         /**
          * 
@@ -688,6 +806,7 @@
         init: function init(settings) {
             my.settings = settings;
             my.initPropr();
+            my.retrieveVideoDataDebounced = my.debounce(my.retrieveVideoData, 20);
             my.delegateForPage();
         }
     };

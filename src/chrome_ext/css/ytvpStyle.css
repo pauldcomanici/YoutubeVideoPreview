@@ -15,10 +15,10 @@
 	float: left;
 }
 .ytVideoPreview-ratingContainer .ytVideoPreview-ratingLikes {
-	background: rgb(85, 153, 0);
+	background: #1b7fcc;
 }
 .ytVideoPreview-ratingContainer .ytVideoPreview-ratingDislikes {
-	background: rgb(255, 0, 0);
+	background: #CCC;
 }
 /*rating bar height, by default is 4px*/
 .ytVideoPreview-ratingHeight4, .ytVideoPreview-ratingHeight4 > div {
@@ -32,11 +32,11 @@
 .ytVideoPreview-ratingHeight5, .ytVideoPreview-ratingHeight5 > div {
     height: 5px;
 }
-/*rating bar height, custom classes for perf, 5px*/
+/*rating bar height, custom classes for perf, 6px*/
 .ytVideoPreview-ratingHeight6, .ytVideoPreview-ratingHeight6 > div {
     height: 6px;
 }
-/*rating bar height, custom classes for perf, 5px*/
+/*rating bar height, custom classes for perf, 7px*/
 .ytVideoPreview-ratingHeight7, .ytVideoPreview-ratingHeight7 > div {
     height: 7px;
 }
