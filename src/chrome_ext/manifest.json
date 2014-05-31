@@ -31,5 +31,6 @@
     "default_locale": "en",
     "version": "2.1.0",
     "manifest_version": 2,
-    "minimum_chrome_version": "20"
+    "minimum_chrome_version": "20",
+    "author": "darkyndy"
 }
