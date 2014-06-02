@@ -1,12 +1,12 @@
 {
   "description": "__MSG_extensionDescription__",
   "icons": {
-    "128": "ytpreview128.png",
-    "48": "ytpreview48.png",
-    "16": "ytpreview16.png"
+    "128": "videoPreview128.png",
+    "48": "videoPreview48.png",
+    "16": "videoPreview16.png"
   },
   "web_accessible_resources": [
-    "ytpreview48.png"
+    "videoPreview48.png"
   ],
   "background": {
     "page": "background.html"
@@ -21,15 +21,15 @@
   ],
   "page_action": {
     "matches": [ "http://www.youtube.com/*", "https://www.youtube.com/*" ],
-    "default_icon": "ytpreview16.png",
+    "default_icon": "videoPreview16.png",
     "default_title": "__MSG_extensionPopupTitle__",
     "default_popup": "popup.html"
   },
   "options_page": "site.html",
   "name": "__MSG_extensionName__",
-  "permissions": ["tabs", "storage", "http://gdata.youtube.com/*", "http://www.youtube.com/*", "https://www.youtube.com/*" ],
+  "permissions": ["tabs", "storage", "http://www.youtube.com/*", "https://www.youtube.com/*" ],
   "default_locale": "en",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "manifest_version": 2,
   "minimum_chrome_version": "20"
 }
