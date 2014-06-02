@@ -1,8 +1,4 @@
-Extension was taken down by Google as it doesn't comply with https://developer.chrome.com/webstore/branding
-
-I'm working to see what I need to change, will come online as soon as possible.
-
-YouTube&trade; Video preview
+Video Preview (for YouTube&trade;)
 Is an extension for:
 - Google Chrome - https://chrome.google.com/webstore/detail/youtube-video-preview/hmggjocpafbpjdhoknaneokaklekakeh
 - FireFox - not supported any more - https://addons.mozilla.org/en-US/firefox/addon/youtube-video-preview/
