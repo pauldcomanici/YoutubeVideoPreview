@@ -3,12 +3,12 @@
  * @author Paul Comanici (darkyndy) <darkyndy@gmail.com>
  * @requires DyDomHelper
  * @requires ytConst.js
- * 
+ *
  */
 /*jslint browser: true, devel: true */
 (function () {
     "use strict";
-    /*global setTimeout, DyDomHelper, XMLHttpRequest, chrome, self, PROPR_VIEW_RATING, PROPR_IMAGE_TIME */
+    /*global setTimeout, DyDomHelper, XMLHttpRequest, chrome, self, PROPR_VIEW_RATING, PROPR_IMAGE_REAL_SIZE, PROPR_IMAGE_TIME, PROPR_RATING_HEIGHT */
     var my;
     my = {
         defaultImg: "default",        //default image name
@@ -26,12 +26,12 @@
         settings: {},                         //settings object for extension
         usedPrefix: "ytVideoPreview", //prefix used for dataset
         appendRatingObj: {},
-        debounce: function debounce(func, wait) {
+        debounce: function (func, wait) {
             var timeout;
             return function () {
                 var context = this;
                 clearTimeout(timeout);
-                timeout = setTimeout(function() {
+                timeout = setTimeout(function () {
                     timeout = null;
                     func.apply(context, []);
                 }, wait);
@@ -45,7 +45,7 @@
          *   This is used to add prefix for each property so will not break YouTube UI
          * @param {String} propr
          */
-        getProprName: function getProprName(propr) {
+        getProprName: function (propr) {
             var proprName;
             //propr = propr.charAt(0).toUpperCase() + propr.substr(1, propr.length);
             proprName = my.usedPrefix + propr;
@@ -55,7 +55,7 @@
          * @description Filter CSS property by setting to integer
          * @param {String} propVal
          */
-        cssPropAsInt: function filterCssProp(propVal) {
+        cssPropAsInt: function (propVal) {
             propVal = parseInt(propVal, 10);
             if (isNaN(propVal)) {
                 propVal = 0;
@@ -81,7 +81,7 @@
                     negativeRatio = 100 - positiveRatio;
                     negativeRatio = Math.round(negativeRatio * 100) / 100;
                     ratingEl = DyDomHelper.createEl("div",
-                            {"class": my.getProprName("-ratingContainer") + " " + my.getProprName("-ratingHeight" + my.settings[PROPR_RATING_HEIGHT]) });
+                        {"class": my.getProprName("-ratingContainer") + " " + my.getProprName("-ratingHeight" + my.settings[PROPR_RATING_HEIGHT]) });
                     ratingElHtml = '<DIV ' +
                         'class="' + my.getProprName("-ratingLikes") + '" ' +
                         'title="' + likes + ' likes from ' + ratingCount + ' rating (' + positiveRatio + '%)' + '" ' +
@@ -99,12 +99,12 @@
             }
         },
         /**
-         * 
+         *
          * @description Add video rating
          * @param {Object} resp
          * @param {HTMLElement} parentEl
          */
-        appendRating: function appendRating(resp) {
+        appendRating: function (resp) {
             var respData,
                 i,
                 respItemsLength;
@@ -127,7 +127,7 @@
             }
         },
         /**
-         * 
+         *
          * @description Ajax request
          * @param {String} reqMethod
          * @param {String} reqUrl
@@ -136,7 +136,7 @@
          * @param {Function} successFn
          * @param {Function} errorFn
          */
-        doAjaxRequest: function doAjaxRequest(reqMethod, reqUrl, reqData, cbParams, successFn, errorFn) {
+        doAjaxRequest: function (reqMethod, reqUrl, reqData, cbParams, successFn, errorFn) {
             var xhr,
                 aSync = true,
                 noCache = false,
@@ -193,7 +193,7 @@
             }
         },
         /**
-         * 
+         *
          * @description Retrieve video data
          */
         retrieveVideoData: function retrieveVideoData() {
@@ -217,7 +217,7 @@
             //reqData = "v=2&prettyprint=false&alt=jsonc";
         },
         /**
-         * 
+         *
          * @description Find video id for rating, in case 4 when parent element is DIV
          * @param {HTMLElement} parentEl
          */
@@ -250,8 +250,8 @@
             asNewRelated = asNewRelated || false;
             if (nodeName === "A") {
                 if (nodeClassList.contains("related-video") ||
-                        nodeClassList.contains("video-list-item-link") ||
-                        nodeClassList.contains("related-playlist")) {
+                    nodeClassList.contains("video-list-item-link") ||
+                    nodeClassList.contains("related-playlist")) {
                     if (asNewRelated) {
                         videoMatch.isCase6 = true;
                     } else {
@@ -278,7 +278,7 @@
             return videoMatch;
         },
         /**
-         * 
+         *
          * @description Test if rating was already applied to video
          *              and if not then apply it
          *   - isCase1 -> when it has only "related-video" or "video-list-item-link" or "related-playlist" class and nodeName is A
@@ -288,7 +288,7 @@
          *   - isCase5 -> when it has only 2 css classes: "yt-uix-sessionlink" and "yt-uix-contextlink" and nodeName is A
          * @param {HTMLElement} videoEl
          */
-        testVideoForRating: function testVideoForRating(videoEl) {
+        testVideoForRating: function (videoEl) {
             var continueTest = false,
                 nodeName,
                 videoId,
@@ -321,8 +321,8 @@
                     }
                 } else {
                     if (nodeName === "A" && nodeClassList.length === 2 &&
-                            nodeClassList.contains("yt-uix-sessionlink") &&
-                            nodeClassList.contains("yt-uix-contextlink")) {
+                        nodeClassList.contains("yt-uix-sessionlink") &&
+                        nodeClassList.contains("yt-uix-contextlink")) {
                         videoMatch.isCase5 = true;
                     } else {
                         videoMatch = my.testVideoForRating1(videoMatch, nodeName, nodeClassList, true);
@@ -365,13 +365,13 @@
             }
         },
         /**
-         * 
+         *
          * @description Before testing video for rating and adding it, do basic validation
          *   - rating preview is enabled;
          *   - element was already parsed
          * @param {HTMLElement} videoEl
          */
-        beforeTestVideoForRating: function beforeTestVideoForRating(videoThumbEl) {
+        beforeTestVideoForRating: function (videoThumbEl) {
             var videoThumbClassList;
             if (my.settings[PROPR_VIEW_RATING]) {
                 //ok, rating preview is enabled
@@ -384,35 +384,38 @@
                 }
             }
         },
-        getNewImagePath: function getNewImagePath(imgData, videoId, imgName) {
+        getNewImagePath: function (imgData, videoId, imgName) {
             return my.baseImgPath + imgData.pathData + "/" + videoId + "/" + imgName + imgData.imgExt;
         },
         /**
-         * 
+         *
          * @description Set default image
          * @param {HTMLElement} imgEl
          * @param {String} videoId
          * @param {String} videoImgElId
          */
-        setDefaultImg: function setDefaultImg(imgEl, videoId, videoImgElId) {
+        setDefaultImg: function (imgEl, videoId, videoImgElId) {
             var imgData;
             imgData = my.videoImgData[videoImgElId];
             if (imgData) {
                 //only if we have data stored for video
                 imgEl.setAttribute("src", my.getNewImagePath(imgData, videoId, imgData.imgDefault));
-                DyDomHelper.setCss(imgEl, {"width": imgData.imgWidth, "top": ""});
+                if (!my.settings[PROPR_IMAGE_REAL_SIZE]) {
+                    //we don't use real image size, as it looks better, now revert
+                    DyDomHelper.setCss(imgEl, {"width": imgData.imgWidth, "top": ""});
+                }
                 imgData.imgIndex = 0;
                 window.clearTimeout(my.hoverTimer);
             }
         },
         /**
-         * 
+         *
          * @description Switch image for video preview
          * @param {HTMLElement} imgEl
          * @param {String} videoId
          * @param {String} videoImgElId
          */
-        switchVideoImg: function switchVideoImg(imgEl, videoId, videoImgElId) {
+        switchVideoImg: function (imgEl, videoId, videoImgElId) {
             var imgData,
                 imgId,
                 imageWidth,
@@ -443,17 +446,23 @@
                     //if we couldn't find correct extension ... don't try any more
                     return;
                 }
-                setCss = {};
-                imgComputedStyle = window.getComputedStyle(imgEl, "");
-                imageWidth = parseInt(imgComputedStyle.getPropertyValue("width"), 10);
-                if (imageWidth !== my.defaultImgWidth) {
-                    setCss.width = my.defaultImgWidth + "px";
-                    updateCss = true;
-                }
-                imageTop = parseInt(imgComputedStyle.getPropertyValue("top"), 10);
-                if (imageTop < -12) {
-                    setCss.top = 0;
-                    updateCss = true;
+                if (!my.settings[PROPR_IMAGE_REAL_SIZE]) {
+                    //we don't real image size, as it looks better
+                    setCss = {};
+                    imgComputedStyle = window.getComputedStyle(imgEl, "");
+                    imageWidth = parseInt(imgComputedStyle.getPropertyValue("width"), 10);
+                    if (imageWidth !== my.defaultImgWidth) {
+                        setCss.width = my.defaultImgWidth + "px";
+                        updateCss = true;
+                    }
+                    imageTop = parseInt(imgComputedStyle.getPropertyValue("top"), 10);
+                    if (imageTop < -12) {
+                        setCss.top = 0;
+                        updateCss = true;
+                    }
+                    if (updateCss) {
+                        DyDomHelper.setCss(imgEl, setCss);
+                    }
                 }
                 newImgSrc = my.getNewImagePath(imgData, videoId, imgId);
                 imgEl.setAttribute("src", newImgSrc);
@@ -476,10 +485,7 @@
                     };
                     imgCached.src = newImgSrc;
                 }
-                
-                if (updateCss) {
-                    DyDomHelper.setCss(imgEl, setCss);
-                }
+
                 imgData.imgIndex = imgId;
                 my.hoverTimer = setTimeout(my.switchVideoImg, my.settings[PROPR_IMAGE_TIME], imgEl, videoId, videoImgElId);
             }
@@ -488,12 +494,12 @@
 
         },
         /**
-         * 
+         *
          * @description Test if image element is for a video
          * @param {HTMLElement} videoImgEl
          * @param {String} actType
          */
-        testVideoImg: function testVideoImg(videoImgEl, actType) {
+        testVideoImg: function (videoImgEl, actType) {
             var testNr,              //store number of tests made for a specific video
                 testNrAttr,
                 initImgRegExp,       //reg exp to find videoId, for jpg image
@@ -564,12 +570,12 @@
             }
         },
         /**
-         * 
+         *
          * @description Initialize video settings
          * @param {String} actType
          * @param {HTMLElement} videoImgEl
          */
-        initVideoSettings: function initVideoSettings(actType, videoImgEl) {
+        initVideoSettings: function (actType, videoImgEl) {
             var imgData,
                 settingsParsed,
                 parsedAttr,
@@ -604,11 +610,11 @@
             }
         },
         /**
-         * 
+         *
          * @description Function executed when user enters video element
          * @param {Event} evt
          */
-        mouseEnterVideo: function mouseEnterVideo(evt) {
+        mouseEnterVideo: function (evt) {
             var videoImgEl;
             //console.log('hover in');
             videoImgEl = this.querySelector("img");
@@ -617,19 +623,19 @@
             evt.stopPropagation();
         },
         /**
-         * 
+         *
          * @description Function executed when user exits video element
          * @param {Event} evt
          */
-        mouseExitVideo: function mouseExitVideo(evt) {
+        mouseExitVideo: function (evt) {
             var videoImgEl,
                 targetEl;
             //console.log('hover out');
             targetEl = evt.toElement || evt.relatedTarget;
             if (targetEl) {
                 if (targetEl === this || targetEl.parentNode === this ||
-                        targetEl.parentNode.parentNode === this ||
-                        targetEl.parentNode.parentNode.parentNode === this) {
+                    targetEl.parentNode.parentNode === this ||
+                    targetEl.parentNode.parentNode.parentNode === this) {
                     return;
                 }
             }
@@ -638,7 +644,7 @@
             evt.stopPropagation();
         },
         /**
-         * 
+         *
          * @description Attach mouse event for video thumb
          * @param {Array} videoEls
          */
@@ -665,28 +671,28 @@
             }
         },
         /**
-         * 
+         *
          * @description Attach mouse event for video
          * @param eventOnEl
          */
-        delegateMouseEvt: function delegateMouseEvt(eventOnEl) {
+        delegateMouseEvt: function (eventOnEl) {
             if (!eventOnEl) {
                 eventOnEl = document.getElementById("body-container");
                 if (!eventOnEl) {
                     eventOnEl = document;
                 }
             }
-            
+
             my.delegateOnVideoThumb(eventOnEl.getElementsByClassName("video-thumb"));
             my.delegateOnVideoThumb(eventOnEl.getElementsByClassName("yt-uix-simple-thumb-wrap"));
-            
+
         },
         /**
-         * 
+         *
          * @description Test for new video inserted in page
          * @param {Event} evt
          */
-        testForNewVideo: function testForNewVideo(evt) {
+        testForNewVideo: function (evt) {
             var nodeName,
                 el,
                 continueLogic = true;
@@ -694,8 +700,8 @@
             if (el) {
                 nodeName = el.nodeName.toLowerCase();
                 if (nodeName === "#comment" || nodeName === "#text" || nodeName === "script" ||
-                        nodeName === "style" || nodeName === "link" || nodeName === "input" ||
-                        nodeName === "iframe") {
+                    nodeName === "style" || nodeName === "link" || nodeName === "input" ||
+                    nodeName === "iframe") {
                     continueLogic = false;
                 }
                 if (continueLogic) {
@@ -705,19 +711,19 @@
             }
         },
         /**
-         * 
+         *
          * @description Attach events for page
          */
-        delegateForPage: function delegateForPage() {
+        delegateForPage: function () {
             document.addEventListener("DOMNodeInserted", my.testForNewVideo, true);
             my.delegateMouseEvt();
         },
         /**
-         * 
+         *
          * @description Parse response at get settings
          * @param {Object} response
          */
-        parseResponseAtGetSettings: function parseResponseAtGetSettings(response) {
+        parseResponseAtGetSettings: function (response) {
             //console.log(response);
             if (typeof response === "object") {
                 if (response.settings) {
@@ -733,13 +739,13 @@
             document.getElementsByTagName('head')[0].appendChild(stylesheet);
         },
         /**
-         * 
+         *
          * @description Called when a message is passed.
          * @param {Object} request
          * @param sender
          * @param {Function} sendResponse
          */
-        onRequest: function onRequest(request) {
+        onRequest: function (request) {
             var proprName,
                 newValue,
                 response,
@@ -770,10 +776,10 @@
             }
         },
         /**
-         * 
+         *
          * @description Attach events for extension
          */
-        delegateForExtension: function delegateForExtension() {
+        delegateForExtension: function () {
             if (window.chrome && chrome.extension) {
                 chrome.extension.sendMessage("showAction");
                 chrome.extension.sendMessage("getSettings");
@@ -785,10 +791,10 @@
             }
         },
         /**
-         * 
+         *
          * @description Initialize extension properties
          */
-        initPropr: function initPropr() {
+        initPropr: function () {
             var bodyEl;
             my.ratingAddedCssClass = my.getProprName("-ratingActive");
             my.knownAddedCssClass = my.getProprName("-videoKnown");
@@ -799,11 +805,11 @@
             }
         },
         /**
-         * 
+         *
          * @description Initialize youtube video preview for page
          * @param {Object} settings
          */
-        init: function init(settings) {
+        init: function (settings) {
             my.settings = settings;
             my.initPropr();
             my.retrieveVideoDataDebounced = my.debounce(my.retrieveVideoData, 20);

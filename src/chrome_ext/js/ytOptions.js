@@ -3,7 +3,7 @@
  */
 (function () {
     "use strict";
-	/*global window, document, chrome, CustomEvent, DyDomHelper, PROPR_IMAGE_TIME, PROPR_VIEW_RATING, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM */
+	/*global window, document, chrome, CustomEvent, DyDomHelper, PROPR_IMAGE_TIME, PROPR_IMAGE_REAL_SIZE, PROPR_VIEW_RATING, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM */
     //TODO: improve perf by caching elements
     var my = {
 		/**

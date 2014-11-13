@@ -12,10 +12,25 @@ var YtSettings = (function () {
 	my = {
 		initialized: false,
 		/**
-		 * 
 		 * @description Application properties
 		 */
 		propr: {},
+        /**
+         * @description Boolean properties, used for filtering
+         */
+        booleanPropr: [
+            PROPR_IMAGE_REAL_SIZE,
+            PROPR_VIEW_RATING,
+            PROPR_SHOW_ICON,
+            PROPR_HIDE_ICON_CONFIRM
+        ],
+        /**
+         * @description Number properties, used for filtering
+         */
+        numberPropr: [
+            PROPR_IMAGE_TIME,
+            PROPR_RATING_HEIGHT
+        ],
 		/**
 		 * 
 		 * @description Filter boolean value
@@ -36,17 +51,13 @@ var YtSettings = (function () {
 		 * @returns {String|Number|Boolean}
 		 */
 		filterPropr: function (proprName, proprVal) {
-			var boolPropr,
-				intPropr,
-				proprNameIndex;
+			var proprNameIndex;
 			if (proprName) {
-				boolPropr = [PROPR_VIEW_RATING, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM];
-				proprNameIndex = boolPropr.indexOf(proprName);
+				proprNameIndex = my.booleanPropr.indexOf(proprName);
 				if (proprNameIndex > -1) {
 					proprVal = my.filterBool(proprVal);
 				} else {
-					intPropr = [PROPR_IMAGE_TIME, PROPR_RATING_HEIGHT];
-					proprNameIndex = intPropr.indexOf(proprName);
+					proprNameIndex = my.numberPropr.indexOf(proprName);
 					if (proprNameIndex > -1) {
 						proprVal = parseInt(proprVal, 10);
 						if (isNaN(proprVal)) {
@@ -104,7 +115,9 @@ var YtSettings = (function () {
 			my.propr[PROPR_SHOW_ICON] = true;
 			my.propr[PROPR_HIDE_ICON_CONFIRM] = true;
 			my.propr[PROPR_RATING_HEIGHT] = 4;
-			proprNames = [PROPR_IMAGE_TIME, PROPR_VIEW_RATING, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM, PROPR_RATING_HEIGHT];
+			my.propr[PROPR_IMAGE_REAL_SIZE] = false;
+			proprNames = [PROPR_IMAGE_TIME, PROPR_IMAGE_REAL_SIZE,
+                PROPR_VIEW_RATING, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM, PROPR_RATING_HEIGHT];
 			YtStorage.getAll(proprNames, my.initCb);
 		},
 		/**
