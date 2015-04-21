@@ -45,7 +45,6 @@
     addLocalization("showIconFlagNo", "no");
     addLocalization("showIconFlagDesc", "optionShowIconFlagDesc");
     addLocalization("hideIconConfirmFlagLabel", "optionsHideIconConfirmFlagLabel");
-    addLocalization("previewImageRealSizeFlagLabel", "optionsPreviewImageRealSizeFlagLabel");
     addLocalization("hideIconConfirmFlagFalse", "yes");
     addLocalization("hideIconConfirmFlagTrue", "no");
     addLocalization("optionsSaveMessage", "optionsSaveMessage");

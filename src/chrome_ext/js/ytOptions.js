@@ -3,7 +3,7 @@
  */
 (function () {
   "use strict";
-  /*global window, document, chrome, CustomEvent, DyDomHelper, PROPR_IMAGE_TIME, PROPR_IMAGE_REAL_SIZE, PROPR_RATING_HEIGHT, PROPR_VIEW_RATING, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM */
+  /*global window, document, chrome, CustomEvent, DyDomHelper, PROPR_IMAGE_TIME, PROPR_RATING_HEIGHT, PROPR_VIEW_RATING, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM */
   //TODO: improve perf by caching elements
   var my = {
     /**
@@ -174,35 +174,11 @@
     },
 
     /**
-     * @description Function executed when updatePreviewImageRealSize event is triggered
-     * @param {CustomEvent} evt
-     */
-    updatePreviewImageRealSize: function (evt) {
-      my.cachedEls[PROPR_IMAGE_REAL_SIZE].value = evt.detail.newValue.toString();
-      ;
-    },
-    /**
-     *
-     * @description Function executed when preview image real size flag is changed
-     */
-    onChangePreviewImageRealSize: function () {
-      my.updatePropr(PROPR_IMAGE_REAL_SIZE, this.value);
-    },
-    /**
-     * @description Setup select for preview image real size flag
-     * @param {Boolean} defaultVal
-     */
-    setupPreviewImageRealSize: function (defaultVal) {
-      my.cachedEls[PROPR_IMAGE_REAL_SIZE].value = defaultVal.toString();
-      my.cachedEls[PROPR_IMAGE_REAL_SIZE].addEventListener("change", my.onChangePreviewImageRealSize, false);
-    },
-    /**
      *
      * @description Attach events
      */
     delegate: function () {
       window.addEventListener("updateShowIcon", my.updateShowIcon, false);
-      window.addEventListener("updatePreviewImageRealSize", my.updatePreviewImageRealSize, false);
       window.addEventListener("updateHideIconConfirm", my.updateHideIconConfirm, false);
       window.addEventListener("initOptionsPage", my.initCb, false);
     },
@@ -218,7 +194,6 @@
       my.setupViewRating(settings[PROPR_VIEW_RATING]);
       my.setupShowIcon(settings[PROPR_SHOW_ICON]);
       my.setupHideIconConfirm(settings[PROPR_HIDE_ICON_CONFIRM]);
-      my.setupPreviewImageRealSize(settings[PROPR_IMAGE_REAL_SIZE]);
     },
     /**
      *
@@ -232,7 +207,6 @@
       my.cachedEls[PROPR_VIEW_RATING] = document.getElementById("enableRatingView");
       my.cachedEls[PROPR_SHOW_ICON] = document.getElementById("showIconFlag");
       my.cachedEls[PROPR_HIDE_ICON_CONFIRM] = document.getElementById("hideIconConfirmFlag");
-      my.cachedEls[PROPR_IMAGE_REAL_SIZE] = document.getElementById("previewImageRealSizeFlag");
       //Listen for the messages
       my.delegate();
       bgWindow = my.getBackgroundPage();

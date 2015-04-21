@@ -114,7 +114,7 @@ a:hover {
 }
 .site_pages {
 	-webkit-transition: all .5s ease-in-out;
-	-moz-transition: all .5s ease-in-out;
+	transition: all .5s ease-in-out;
 }
 .site_pages p {
 	text-indent: 20px;

@@ -72,9 +72,6 @@
   "optionsHideIconConfirmFlagLabel": {
     "message": "Confirm at hide icon:"
   },
-  "optionsPreviewImageRealSizeFlagLabel": {
-    "message": "Preview image at real dimension:"
-  },
   "optionsSaveMessage": {
     "message": "Everything is automatically saved at change"
   },

@@ -8,7 +8,7 @@
 /*jslint browser: true, devel: true */
 (function () {
   "use strict";
-  /*global setTimeout, DyDomHelper, XMLHttpRequest, chrome, self, PROPR_VIEW_RATING, PROPR_IMAGE_REAL_SIZE, PROPR_IMAGE_TIME, PROPR_RATING_HEIGHT */
+  /*global setTimeout, DyDomHelper, XMLHttpRequest, chrome, self, PROPR_VIEW_RATING, PROPR_IMAGE_TIME, PROPR_RATING_HEIGHT */
   var my;
   my = {
     defaultImg: "default",        //default image name
@@ -416,10 +416,6 @@
       if (imgData) {
         //only if we have data stored for video
         imgEl.setAttribute("src", my.getNewImagePath(imgData, videoId, imgData.imgDefault));
-        if (my.settings[PROPR_IMAGE_REAL_SIZE]) {
-          //we don't use real image size, as it looks better, now revert
-          DyDomHelper.setCss(imgEl, {"width": imgData.imgWidth, "top": ""});
-        }
         imgData.imgIndex = 0;
         window.clearTimeout(my.hoverTimer);
       }
@@ -434,11 +430,6 @@
     switchVideoImg: function (imgEl, videoId, videoImgElId) {
       var imgData,
         imgId,
-        imageWidth,
-        imageTop,
-        setCss,
-        updateCss = false,
-        imgComputedStyle,
         newImgSrc,
         imgCached;
       if (my.hoverTimer !== null) {
@@ -461,24 +452,6 @@
         if (imgData.correctExtension === false) {
           //if we couldn't find correct extension ... don't try any more
           return;
-        }
-        if (my.settings[PROPR_IMAGE_REAL_SIZE]) {
-          //we don't real image size, as it looks better
-          setCss = {};
-          imgComputedStyle = window.getComputedStyle(imgEl, "");
-          imageWidth = parseInt(imgComputedStyle.getPropertyValue("width"), 10);
-          if (imageWidth !== my.defaultImgWidth) {
-            setCss.width = my.defaultImgWidth + "px";
-            updateCss = true;
-          }
-          imageTop = parseInt(imgComputedStyle.getPropertyValue("top"), 10);
-          if (imageTop < -12) {
-            setCss.top = 0;
-            updateCss = true;
-          }
-          if (updateCss) {
-            DyDomHelper.setCss(imgEl, setCss);
-          }
         }
         newImgSrc = my.getNewImagePath(imgData, videoId, imgId);
         imgEl.setAttribute("src", newImgSrc);
@@ -566,7 +539,6 @@
               imgData.pathData = rezReg[1] || "";
               imgData.imgIndex = 0;
               imgData.imgDefault = rezReg[3] + rezReg[4];
-              imgData.imgWidth = DyDomHelper.getCssProp(videoImgEl, "width");
               imgData.imgExt = "." + rezReg[5];
               my.videoImgData[videoImgElId] = imgData;
               videoImgEl.setAttribute(my.getProprName("Parsed"), "true");

@@ -6,7 +6,7 @@
  */
 var YtSettings = (function () {
   "use strict";
-  /*global console, YtStorage, PROPR_IMAGE_TIME, PROPR_IMAGE_REAL_SIZE, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM, PROPR_VIEW_RATING, PROPR_RATING_HEIGHT */
+  /*global console, YtStorage, PROPR_IMAGE_TIME, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM, PROPR_VIEW_RATING, PROPR_RATING_HEIGHT */
   var my;
   my = {
     initialized: false,
@@ -18,7 +18,6 @@ var YtSettings = (function () {
      * @description Boolean properties, used for filtering
      */
     booleanPropr: [
-      PROPR_IMAGE_REAL_SIZE,
       PROPR_VIEW_RATING,
       PROPR_SHOW_ICON,
       PROPR_HIDE_ICON_CONFIRM
@@ -114,8 +113,7 @@ var YtSettings = (function () {
       my.propr[PROPR_SHOW_ICON] = true;
       my.propr[PROPR_HIDE_ICON_CONFIRM] = true;
       my.propr[PROPR_RATING_HEIGHT] = 4;
-      my.propr[PROPR_IMAGE_REAL_SIZE] = false;
-      proprNames = [PROPR_IMAGE_TIME, PROPR_IMAGE_REAL_SIZE,
+      proprNames = [PROPR_IMAGE_TIME,
         PROPR_VIEW_RATING, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM, PROPR_RATING_HEIGHT];
       YtStorage.getAll(proprNames, my.initCb);
     },

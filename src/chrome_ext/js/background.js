@@ -6,7 +6,7 @@
  */
 (function () {
   "use strict";
-  /*global chrome, window, setTimeout, CustomEvent, YtSettings, PROPR_IMAGE_TIME, PROPR_IMAGE_REAL_SIZE, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM, PROPR_VIEW_RATING */
+  /*global chrome, window, setTimeout, CustomEvent, YtSettings, PROPR_IMAGE_TIME, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM, PROPR_VIEW_RATING */
   var my;
   my = {
     /**
@@ -229,8 +229,6 @@
         eventForOptionsPage = "updateShowIcon";
       } else if (changeOn === PROPR_HIDE_ICON_CONFIRM) {
         eventForOptionsPage = "updateHideIconConfirm";
-      } else if (changeOn === PROPR_IMAGE_REAL_SIZE) {
-        eventForOptionsPage = "updatePreviewImageRealSize";
       } else if (changeOn === PROPR_IMAGE_TIME) {
         eventForActionPage = true;
       } else if (changeOn === PROPR_VIEW_RATING) {

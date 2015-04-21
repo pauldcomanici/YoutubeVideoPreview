@@ -72,9 +72,6 @@
   "optionsHideIconConfirmFlagLabel": {
     "message": "Mesaj de confirmare la ascunderea iconitei:"
   },
-  "optionsPreviewImageRealSizeFlagLabel": {
-    "message": "Imaginea de preview la dimensiunea reala:"
-  },
   "optionsSaveMessage": {
     "message": "Totul este salvat automat la schimbare"
   },
