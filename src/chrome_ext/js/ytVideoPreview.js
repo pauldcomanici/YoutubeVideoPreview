@@ -62,39 +62,50 @@
       }
       return propVal;
     },
-    populateVideoRating: function (respData) {
+    addRatingCssClassToBody: function () {
+      if (my.settings[PROPR_VIEW_RATING]) {
+        //ok, rating preview is enabled, add on body class for rating active
+        document.body.classList.add(my.ratingAddedCssClass);
+      }
+    },
+    populateVideoRating: function (videoId) {
       var positiveRatio,
         negativeRatio,
         ratingEl,
         ratingElHtml,
+        ratingElCssClass,
         likes,
         dislikes,
-        ratingCount,
-        parentEl;
-      if (respData && respData.id) {
-        likes = parseInt(respData.likeCount, 10); //be sure is integer
-        dislikes = parseInt(respData.dislikeCount, 10); //be sure is integer
+        ratingCount;
+      if (videoId && my.appendRatingObj[videoId]) {
+        likes = parseInt(my.appendRatingObj[videoId].likeCount, 10); //be sure is integer
+        dislikes = parseInt(my.appendRatingObj[videoId].dislikeCount, 10); //be sure is integer
         ratingCount = likes + dislikes;
         if (!isNaN(likes) && !isNaN(ratingCount) && ratingCount > 0) {
-          positiveRatio = likes * 100 / ratingCount;
-          positiveRatio = Math.round(positiveRatio * 100) / 100;
-          negativeRatio = 100 - positiveRatio;
-          negativeRatio = Math.round(negativeRatio * 100) / 100;
-          ratingEl = DyDomHelper.createEl("div",
-            {"class": my.getProprName("-ratingContainer") + " " + my.getProprName("-ratingHeight" + my.settings[PROPR_RATING_HEIGHT]) });
-          ratingElHtml = '<DIV ' +
-            'class="' + my.getProprName("-ratingLikes") + '" ' +
-            'title="' + likes + ' likes from ' + ratingCount + ' rating (' + positiveRatio + '%)' + '" ' +
-            'style="width: ' + positiveRatio + '%"></DIV>' +
-            '<DIV ' +
-            'class="' + my.getProprName("-ratingDislikes") + '" ' +
-            'title="dislikes: ' + negativeRatio + '%' + '" ' +
-            'style="width: ' + negativeRatio + '%"></DIV>';
-          ratingEl.innerHTML = ratingElHtml;
-          parentEl = my.appendRatingObj[respData.id];
-          //once retrieved delete it
-          my.appendRatingObj[respData.id] = undefined;
-          parentEl.appendChild(ratingEl); //now add rating in page
+          if (my.appendRatingObj[videoId].parentEl) {
+            //continue only if we have parentEl
+            ratingElCssClass = my.getProprName("-ratingContainer");
+            ratingEl = my.appendRatingObj[videoId].parentEl.querySelector("." + ratingElCssClass);
+            if (!ratingEl) {
+              //in case rating element was not added
+              positiveRatio = likes * 100 / ratingCount;
+              positiveRatio = Math.round(positiveRatio * 100) / 100;
+              negativeRatio = 100 - positiveRatio;
+              negativeRatio = Math.round(negativeRatio * 100) / 100;
+              ratingEl = DyDomHelper.createEl("div",
+                {"class": ratingElCssClass + " " + my.getProprName("-ratingHeight" + my.settings[PROPR_RATING_HEIGHT]) });
+              ratingElHtml = '<DIV ' +
+                'class="' + my.getProprName("-ratingLikes") + '" ' +
+                'title="' + likes + ' likes from ' + ratingCount + ' rating (' + positiveRatio + '%)' + '" ' +
+                'style="width: ' + positiveRatio + '%"></DIV>' +
+                '<DIV ' +
+                'class="' + my.getProprName("-ratingDislikes") + '" ' +
+                'title="dislikes: ' + negativeRatio + '%' + '" ' +
+                'style="width: ' + negativeRatio + '%"></DIV>';
+              ratingEl.innerHTML = ratingElHtml;
+              my.appendRatingObj[videoId].parentEl.appendChild(ratingEl); //now add rating in page
+            }
+          }
         }
       }
     },
@@ -105,9 +116,9 @@
      * @param {HTMLElement} parentEl
      */
     appendRating: function (resp) {
-      var respData,
-        i,
-        respItemsLength;
+      var i,
+        respItemsLength,
+        videoId;
       try {
         resp = JSON.parse(resp);
       } catch (ex) {
@@ -117,12 +128,14 @@
         //response has video items
         respItemsLength = resp.items.length;
         for (i = 0; i < respItemsLength; i += 1) {
-          respData = {};
-          respData.id = resp.items[i].id;
-          respData.likeCount = resp.items[i].statistics.likeCount;
-          respData.dislikeCount = resp.items[i].statistics.dislikeCount;
+          videoId = resp.items[i].id;
+          if (videoId && my.appendRatingObj[videoId] && my.appendRatingObj[videoId].parentEl) {
+            //add rating data to local object
+            my.appendRatingObj[videoId].likeCount = resp.items[i].statistics.likeCount;
+            my.appendRatingObj[videoId].dislikeCount = resp.items[i].statistics.dislikeCount;
+          }
           //now set rating for video
-          my.populateVideoRating(respData);
+          my.populateVideoRating(videoId);
         }
       }
     },
@@ -359,7 +372,10 @@
           if (videoMatch.isCase6) {
             parentEl = videoEl;
           }
-          my.appendRatingObj[videoId] = parentEl;
+          if (!my.appendRatingObj[videoId]) {
+            my.appendRatingObj[videoId] = {};
+          }
+          my.appendRatingObj[videoId].parentEl = parentEl;
           my.retrieveVideoDataDebounced();
         }
       }
@@ -612,6 +628,7 @@
     /**
      *
      * @description Function executed when user enters video element
+     * Note: don't call evt.stopPropagation() as it will block YouTube showing add to quick list
      * @param {Event} evt
      */
     mouseEnterVideo: function (evt) {
@@ -620,7 +637,6 @@
       videoImgEl = this.querySelector("img");
       my.initVideoSettings("in", videoImgEl);
       my.beforeTestVideoForRating(this);
-      evt.stopPropagation();
     },
     /**
      *
@@ -659,10 +675,10 @@
         wasParsed = DyDomHelper.hasClass(videoEl, my.knownAddedCssClass);
         if (!wasParsed) {
           DyDomHelper.addClass(videoEl, my.knownAddedCssClass);
-          if (videoEl.offsetWidth && videoEl.offsetWidth > 50) {
-            //if element has at least 50 px in width then continue,
-            //there are elements that match selector and have 18, 32 or 48 px in width
-            //that must be ignored
+          if (videoEl.offsetWidth === 0 || videoEl.offsetWidth > 50) {
+            //if element has 0 OR at least 50 px in width then continue,
+            //there are elements hidden => take them in consideration
+            //there are elements that match selector and have 18, 32 or 48 px in width => ignore
             videoEl.addEventListener("mouseover", my.mouseEnterVideo, false);
             videoEl.addEventListener("mouseout", my.mouseExitVideo, false);
             my.beforeTestVideoForRating(videoEl);
@@ -707,6 +723,7 @@
         if (continueLogic) {
           //console.log(nodeName);
           my.delegateMouseEvt(el);
+          my.addRatingCssClassToBody();
         }
       }
     },
@@ -791,21 +808,14 @@
       }
     },
     /**
-     *
      * @description Initialize extension properties
      */
     initPropr: function () {
-      var bodyEl;
       my.ratingAddedCssClass = my.getProprName("-ratingActive");
       my.knownAddedCssClass = my.getProprName("-videoKnown");
-      if (my.settings[PROPR_VIEW_RATING]) {
-        //ok, rating preview is enabled, add on body class for rating active
-        bodyEl = document.getElementsByTagName("body")[0];
-        bodyEl.classList.add(my.ratingAddedCssClass);
-      }
+      my.addRatingCssClassToBody();
     },
     /**
-     *
      * @description Initialize youtube video preview for page
      * @param {Object} settings
      */
