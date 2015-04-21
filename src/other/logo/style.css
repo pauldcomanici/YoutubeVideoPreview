@@ -1,0 +1,27 @@
+:root {
+  font-size: 14px;
+  font-family: Garamond;
+}
+.logo {
+  width: 300px;
+  height: 300px;
+  border-radius: 16px;
+  background: linear-gradient(to bottom, #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%);
+}
+.textLine {
+  margin: 0 auto;
+  line-height: 150px;
+  text-align: center;
+  color: #FFF;
+  font-size: 72px;
+}
+.textLine1 {
+}
+.textLine2 {
+  line-height: 100px;
+}
+.textLine3 {
+  color: #000;
+  font-size: 24px;
+  line-height: 50px;
+}
