@@ -3,7 +3,7 @@
  */
 (function () {
   "use strict";
-  /*global window, document, chrome, CustomEvent, DyDomHelper, PROPR_IMAGE_TIME, PROPR_RATING_HEIGHT, PROPR_VIEW_RATING, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM */
+  /*global window, document, chrome, CustomEvent, DyDomHelper, PROPR_IMAGE_TIME, PROPR_RATING_HEIGHT, PROPR_VIEW_RATING, PROPR_SHOW_ICON, PROPR_HIDE_ICON_CONFIRM, PROPR_RATING_LIKE_COLOR, PROPR_RATING_DISLIKE_COLOR */
   //TODO: improve perf by caching elements
   var my = {
     /**
@@ -174,6 +174,67 @@
     },
 
     /**
+     * @description Update color list for rating like
+     * @param {String} selectedColor
+     */
+    updateLikeColorsList: function (selectedColor) {
+      const colorsList = [vpDefaults.RATING_LIKE_COLOR, '#559900'];
+      let colorListHtml = '';
+      colorsList.forEach((color) => {
+        colorListHtml = `${colorListHtml}<option value="${color}">`;
+      });
+      my.cachedEls[PROPR_RATING_LIKE_COLOR_LIST].innerHTML = colorListHtml;
+    },
+    /**
+     *
+     * @description Function executed when rating like color is changed
+     */
+    onChangeRatingLikeColor: function () {
+      my.updatePropr(PROPR_RATING_LIKE_COLOR, this.value);
+      my.updateLikeColorsList(this.value);
+    },
+    /**
+     * @description Setup for rating like color
+     * @param {String} defaultVal
+     */
+    setupRatingLikeColor: function (defaultVal) {
+      my.cachedEls[PROPR_RATING_LIKE_COLOR].value = defaultVal;
+      my.cachedEls[PROPR_RATING_LIKE_COLOR].addEventListener("change", my.onChangeRatingLikeColor, false);
+      my.updateLikeColorsList(this.value);
+    },
+
+    /**
+     * @description Update color list for rating dislike
+     * @param {String} selectedColor
+     */
+    updateDislikeColorsList: function (selectedColor) {
+      const colorsList = [vpDefaults.RATING_DISLIKE_COLOR, '#FF0000'];
+      let colorListHtml = '';
+      colorsList.forEach((color) => {
+        colorListHtml = `${colorListHtml}<option value="${color}">`;
+      });
+      my.cachedEls[PROPR_RATING_DISLIKE_COLOR_LIST].innerHTML = colorListHtml;
+    },
+    /**
+     *
+     * @description Function executed when rating dislike color is changed
+     */
+    onChangeRatingDislikeColor: function () {
+      my.updatePropr(PROPR_RATING_DISLIKE_COLOR, this.value);
+      my.updateDislikeColorsList(this.value);
+    },
+    /**
+     * @description Setup for rating dislike color
+     * @param {String} defaultVal
+     */
+    setupRatingDislikeColor: function (defaultVal) {
+      my.cachedEls[PROPR_RATING_DISLIKE_COLOR].value = defaultVal;
+      my.cachedEls[PROPR_RATING_DISLIKE_COLOR].addEventListener("change", my.onChangeRatingDislikeColor, false);
+      // list with dislike colors
+      my.updateDislikeColorsList(defaultVal);
+    },
+
+    /**
      *
      * @description Attach events
      */
@@ -194,6 +255,8 @@
       my.setupViewRating(settings[PROPR_VIEW_RATING]);
       my.setupShowIcon(settings[PROPR_SHOW_ICON]);
       my.setupHideIconConfirm(settings[PROPR_HIDE_ICON_CONFIRM]);
+      my.setupRatingLikeColor(settings[PROPR_RATING_LIKE_COLOR]);
+      my.setupRatingDislikeColor(settings[PROPR_RATING_DISLIKE_COLOR]);
     },
     /**
      *
@@ -207,6 +270,10 @@
       my.cachedEls[PROPR_VIEW_RATING] = document.getElementById("enableRatingView");
       my.cachedEls[PROPR_SHOW_ICON] = document.getElementById("showIconFlag");
       my.cachedEls[PROPR_HIDE_ICON_CONFIRM] = document.getElementById("hideIconConfirmFlag");
+      my.cachedEls[PROPR_RATING_LIKE_COLOR] = document.getElementById("ratingLikeColor");
+      my.cachedEls[PROPR_RATING_LIKE_COLOR_LIST] = document.getElementById("ratingLikeColorList");
+      my.cachedEls[PROPR_RATING_DISLIKE_COLOR] = document.getElementById("ratingDislikeColor");
+      my.cachedEls[PROPR_RATING_DISLIKE_COLOR_LIST] = document.getElementById("ratingDislikeColorList");
       //Listen for the messages
       my.delegate();
       bgWindow = my.getBackgroundPage();

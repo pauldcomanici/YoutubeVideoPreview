@@ -75,6 +75,12 @@
   "optionsSaveMessage": {
     "message": "Totul este salvat automat la schimbare"
   },
+  "optionRatingDislikeColorLabel": {
+    "message": "Culoare pentru bara de like:"
+  },
+  "optionRatingLikeColorLabel": {
+    "message": "Culoare pentru bara de dislike:"
+  },
   "feedbackPage": {
     "message": "<p>$question$</p><br><p>$issue$</p><br><p>$suggestion$</p><br>$contact1$<br>$contact2$",
     "placeholders": {

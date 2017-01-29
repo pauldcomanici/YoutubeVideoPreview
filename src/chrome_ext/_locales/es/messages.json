@@ -75,6 +75,12 @@
   "optionsSaveMessage": {
     "message": "Everything is automatically saved at change"
   },
+  "optionRatingDislikeColorLabel": {
+    "message": "Color for rating dislike:"
+  },
+  "optionRatingLikeColorLabel": {
+    "message": "Color for rating like:"
+  },
   "feedbackPage": {
     "message": "<p>$question$</p><br><p>$issue$</p><br><p>$suggestion$</p><br>$contact1$<br>$contact2$",
     "placeholders": {
@@ -82,7 +88,7 @@
         "content": "Do you have a question?"
       },
       "issue": {
-        "content": "Have you found a issue?"
+        "content": "Do you have a question?"
       },
       "suggestion": {
         "content": "Do you have any suggestion?"

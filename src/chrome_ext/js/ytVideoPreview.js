@@ -8,7 +8,7 @@
 /*jslint browser: true, devel: true */
 (function () {
   "use strict";
-  /*global setTimeout, DyDomHelper, XMLHttpRequest, chrome, self, PROPR_VIEW_RATING, PROPR_IMAGE_TIME, PROPR_RATING_HEIGHT */
+  /*global setTimeout, DyDomHelper, XMLHttpRequest, chrome, self, PROPR_VIEW_RATING, PROPR_IMAGE_TIME, PROPR_RATING_HEIGHT, PROPR_RATING_LIKE_COLOR, PROPR_RATING_DISLIKE_COLOR */
   var my;
   my = {
     defaultImg: "default",        //default image name
@@ -97,11 +97,11 @@
               ratingElHtml = '<DIV ' +
                 'class="' + my.getProprName("-ratingLikes") + '" ' +
                 'title="' + likes + ' likes from ' + ratingCount + ' rating (' + positiveRatio + '%)' + '" ' +
-                'style="width: ' + positiveRatio + '%"></DIV>' +
+                'style="width: ' + positiveRatio + '%; background: ' + my.settings[PROPR_RATING_LIKE_COLOR] + ';"></DIV>' +
                 '<DIV ' +
                 'class="' + my.getProprName("-ratingDislikes") + '" ' +
                 'title="dislikes: ' + negativeRatio + '%' + '" ' +
-                'style="width: ' + negativeRatio + '%"></DIV>';
+                'style="width: ' + negativeRatio + '%; background: ' + my.settings[PROPR_RATING_DISLIKE_COLOR] + ';"></DIV>';
               ratingEl.innerHTML = ratingElHtml;
               my.appendRatingObj[videoId].parentEl.appendChild(ratingEl); //now add rating in page
             }

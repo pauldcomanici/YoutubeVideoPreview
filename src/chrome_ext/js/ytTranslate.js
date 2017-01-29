@@ -47,6 +47,8 @@
     addLocalization("hideIconConfirmFlagLabel", "optionsHideIconConfirmFlagLabel");
     addLocalization("hideIconConfirmFlagFalse", "yes");
     addLocalization("hideIconConfirmFlagTrue", "no");
+    addLocalization("ratingDislikeColorLabel", "optionRatingDislikeColorLabel");
+    addLocalization("ratingLikeColorLabel", "optionRatingLikeColorLabel");
     addLocalization("optionsSaveMessage", "optionsSaveMessage");
     //feedback section
     addLocalization("page_feedback_", "feedbackPage", "innerHTML");
