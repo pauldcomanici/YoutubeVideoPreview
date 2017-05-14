@@ -8,12 +8,83 @@
 /*jslint browser: true, devel: true */
 (function () {
   "use strict";
+
+
+  const ytVideoPreview = {};
+
+// configuration of the observer: (on node changes)
+  ytVideoPreview.nodeObserverConfig = {
+    attributes: false,
+    childList: true,
+    characterData: false,
+  };
+
+// configuration of the observer: (on attribute changes)
+  ytVideoPreview.attrObserverConfig = {
+    attributes: true,
+    childList: false,
+    characterData: false,
+  };
+
+  ytVideoPreview.mutationCb = (mutations) => {
+    mutations.forEach(ytVideoPreview.thumbnailChanges);
+  };
+
+  ytVideoPreview.thumbnailChanges = (mutation) => {
+    const el = mutation.target;
+    my.delegateOnVideoThumb([el]);
+  };
+
+  ytVideoPreview.observer = new MutationObserver(ytVideoPreview.mutationCb);
+
+  ytVideoPreview.getThumbnailEl = (matchedEl) => {
+    let thumbnailEl = null;
+    if (matchedEl.children && matchedEl.children.thumbnail) {
+      thumbnailEl = matchedEl.children.thumbnail;
+    }
+
+    return thumbnailEl;
+  };
+
+  ytVideoPreview.testVideoForRating = (videoEl) => {
+    let continueTest = false;
+    let parentEl;
+
+    if (videoEl && videoEl.parentNode) {
+      // element where rating element will be inserted (parentEl)
+      parentEl = videoEl.parentNode;
+      const nodeName = parentEl.nodeName;
+      if (nodeName === 'YTD-THUMBNAIL') {
+        continueTest = true;
+      }
+    }
+
+    // separation (for multiple conditions)
+    if (continueTest) {
+      const videoLink = videoEl.getAttribute("href");
+
+      if (videoLink && videoLink.length > 0) {
+        const videoIdRegExp = new RegExp("v=" + my.videoIdReg, "i");
+        if (videoLink.match(videoIdRegExp)) {
+          const videoRegRez = videoIdRegExp.exec(videoLink);
+          const videoId = videoRegRez[1];
+
+          if (!my.appendRatingObj[videoId]) {
+            my.appendRatingObj[videoId] = {};
+          }
+          my.appendRatingObj[videoId].parentEl = parentEl;
+          my.retrieveVideoDataDebounced();
+        }
+      }
+    }
+  };
+
   /*global setTimeout, DyDomHelper, XMLHttpRequest, chrome, self, PROPR_VIEW_RATING, PROPR_IMAGE_TIME, PROPR_RATING_HEIGHT, PROPR_RATING_LIKE_COLOR, PROPR_RATING_DISLIKE_COLOR */
   var my;
   my = {
     defaultImg: "default",        //default image name
     defaultImgWidth: 120,         //default image with
-    baseImgPath: "//i3.ytimg.com/vi", //base image path
+    baseImgPath: "//i.ytimg.com/vi", //base image path
     maxTestNr: 5,                 //maximum number of test to be executed on element
     hoverTimer: null,             //timer when hovering image
     hoverVideoId: "",             //video id of hovering image
@@ -257,131 +328,6 @@
     },
     /**
      *
-     */
-    testVideoForRating1: function (videoMatch, nodeName, nodeClassList, asNewRelated) {
-      //TODO: re-test YouTube to see easier method
-      asNewRelated = asNewRelated || false;
-      if (nodeName === "A") {
-        if (nodeClassList.contains("related-video") ||
-            nodeClassList.contains("video-list-item-link") ||
-            nodeClassList.contains("related-playlist")) {
-          if (asNewRelated) {
-            videoMatch.isCase6 = true;
-          } else {
-            videoMatch.isCase1 = true;
-          }
-        } else {
-          if (nodeClassList.contains("yt-uix-sessionlink")) {
-            if (asNewRelated) {
-              videoMatch.isCase7 = true;
-            } else {
-              videoMatch.isCase2 = true;
-            }
-          } else {
-            if (nodeClassList.contains("yt-uix-contextlink")) {
-              if (asNewRelated) {
-                videoMatch.isCase8 = true;
-              } else {
-                videoMatch.isCase3 = true;
-              }
-            }
-          }
-        }
-      }
-      return videoMatch;
-    },
-    /**
-     *
-     * @description Test if rating was already applied to video
-     *              and if not then apply it
-     *   - isCase1 -> when it has only "related-video" or "video-list-item-link" or "related-playlist" class and nodeName is A
-     *   - isCase2 -> when it has only "yt-uix-sessionlink" class and not case 1 classes and nodeName is A
-     *   - isCase3 -> when it has only "yt-uix-contextlink" and nodeName is A
-     *   - isCase4 -> when it has only "thumb-container" and nodeName is DIV
-     *   - isCase5 -> when it has only 2 css classes: "yt-uix-sessionlink" and "yt-uix-contextlink" and nodeName is A
-     * @param {HTMLElement} videoEl
-     */
-    testVideoForRating: function (videoEl) {
-      var continueTest = false,
-        nodeName,
-        videoId,
-        videoLink = "",
-        videoRegRez,
-        videoIdRegExp,
-        videoMatch = {
-        },
-        matchesCaseKey,
-        parentEl, //element where rating element will be inserted
-        nodeClassList;
-      if (videoEl && videoEl.parentNode) {
-        parentEl = videoEl.parentNode;
-        nodeClassList = parentEl.classList;
-        nodeName = parentEl.nodeName;
-        if (nodeClassList.contains("ux-thumb-wrap")) {
-          if (nodeName === "A") {
-            continueTest = true;
-          } else {
-            parentEl = parentEl.parentNode;
-            nodeName = parentEl.nodeName;
-            nodeClassList = parentEl.classList;
-            if (nodeName === "DIV") {
-              if (nodeClassList.contains("thumb-container")) {
-                videoMatch.isCase4 = true;
-              }
-            } else {
-              videoMatch = my.testVideoForRating1(videoMatch, nodeName, nodeClassList);
-            }
-          }
-        } else {
-          if (nodeName === "A" && nodeClassList.length === 2 &&
-              nodeClassList.contains("yt-uix-sessionlink") &&
-              nodeClassList.contains("yt-uix-contextlink")) {
-            videoMatch.isCase5 = true;
-          } else {
-            videoMatch = my.testVideoForRating1(videoMatch, nodeName, nodeClassList, true);
-          }
-        }
-        for (matchesCaseKey in videoMatch) {
-          if (videoMatch.hasOwnProperty(matchesCaseKey)) {
-            if (videoMatch[matchesCaseKey]) {
-              continueTest = true;
-              break;
-            }
-          }
-        }
-      }
-      if (continueTest) {
-        //one of cases is true
-        if (videoMatch.isCase2) {
-          parentEl = parentEl.parentNode;
-        }
-        videoLink = parentEl.getAttribute("href");
-        if (videoLink && videoLink.length > 0) {
-          videoIdRegExp = new RegExp("v=" + my.videoIdReg, "i");
-          if (videoLink.match(videoIdRegExp)) {
-            videoRegRez = videoIdRegExp.exec(videoLink);
-            videoId = videoRegRez[1];
-          }
-        } else {
-          if (videoMatch.isCase4) {
-            videoId = my.findVideoId(parentEl);
-          }
-        }
-        if (videoId) {
-          //console.log(videoId);
-          if (videoMatch.isCase6) {
-            parentEl = videoEl;
-          }
-          if (!my.appendRatingObj[videoId]) {
-            my.appendRatingObj[videoId] = {};
-          }
-          my.appendRatingObj[videoId].parentEl = parentEl;
-          my.retrieveVideoDataDebounced();
-        }
-      }
-    },
-    /**
-     *
      * @description Before testing video for rating and adding it, do basic validation
      *   - rating preview is enabled;
      *   - element was already parsed
@@ -390,14 +336,15 @@
     beforeTestVideoForRating: function (videoThumbEl) {
       var videoThumbClassList;
       if (my.settings[PROPR_VIEW_RATING]) {
-        //ok, rating preview is enabled
+        // ok, rating preview is enabled
         videoThumbClassList = videoThumbEl.classList;
         if (!videoThumbClassList.contains(my.ratingAddedCssClass)) {
-          //ok, element was not parsed for video rating preview
+          // ok, element was not parsed for video rating preview
           videoThumbClassList.add(my.ratingAddedCssClass);
-          //now test if we can apply rating to it
-          my.testVideoForRating(videoThumbEl);
         }
+        // TODO: this part should be improved (less checking)
+        // now test if we can apply rating to it
+        ytVideoPreview.testVideoForRating(videoThumbEl);
       }
     },
     getNewImagePath: function (imgData, videoId, imgName) {
@@ -448,6 +395,7 @@
       if (imgId > 3) {
         imgId = 1;
       }
+
       if (videoId) {
         if (imgData.correctExtension === false) {
           //if we couldn't find correct extension ... don't try any more
@@ -475,12 +423,11 @@
           imgCached.src = newImgSrc;
         }
 
+        // TODO: show also image number while hovering (indication of thumbnail number)
+
         imgData.imgIndex = imgId;
         my.hoverTimer = setTimeout(my.switchVideoImg, my.settings[PROPR_IMAGE_TIME], imgEl, videoId, videoImgElId);
       }
-    },
-    testVideoImageForMatch: function () {
-
     },
     /**
      *
@@ -553,7 +500,7 @@
       } else {
         if (my.maxTestNr >= testNr) {
           testNr += 1;
-          videoImgEl.setAttribute(testNrAttr, testNr);
+          videoImgEl.setAttribute(testNrAttr, `${testNr}`);
         }
       }
     },
@@ -642,19 +589,34 @@
         i,
         wasParsed;
       videoElsMaxIndex = videoEls.length - 1;
+
       for (i = videoElsMaxIndex; i >= 0; i = i - 1) {
         videoEl = videoEls[i];
-        wasParsed = DyDomHelper.hasClass(videoEl, my.knownAddedCssClass);
-        if (!wasParsed) {
-          DyDomHelper.addClass(videoEl, my.knownAddedCssClass);
-          if (videoEl.offsetWidth === 0 || videoEl.offsetWidth > 50) {
-            //if element has 0 OR at least 50 px in width then continue,
-            //there are elements hidden => take them in consideration
-            //there are elements that match selector and have 18, 32 or 48 px in width => ignore
-            videoEl.addEventListener("mouseover", my.mouseEnterVideo, false);
-            videoEl.addEventListener("mouseout", my.mouseExitVideo, false);
-            my.beforeTestVideoForRating(videoEl);
+        let linkVideoEl;
+        const videoElNode = videoEl.nodeName;
+        if (videoElNode === 'YTD-THUMBNAIL') {
+          // parent element
+          const thumbnailEl = ytVideoPreview.getThumbnailEl(videoEl);
+          if (thumbnailEl) {
+            linkVideoEl = thumbnailEl;
           }
+        } else if (videoElNode === 'A') {
+          linkVideoEl = videoEl;
+        }
+
+        if (linkVideoEl) {
+          wasParsed = DyDomHelper.hasClass(linkVideoEl, my.knownAddedCssClass);
+          if (!wasParsed) {
+            DyDomHelper.addClass(linkVideoEl, my.knownAddedCssClass);
+            if (linkVideoEl.offsetWidth === 0 || linkVideoEl.offsetWidth > 50) {
+              //if element has 0 OR at least 50 px in width then continue,
+              //there are elements hidden => take them in consideration
+              //there are elements that match selector and have 18, 32 or 48 px in width => ignore
+              linkVideoEl.addEventListener("mouseover", my.mouseEnterVideo, false);
+              linkVideoEl.addEventListener("mouseout", my.mouseExitVideo, false);
+            }
+          }
+          my.beforeTestVideoForRating(linkVideoEl);
         }
       }
     },
@@ -671,8 +633,7 @@
         }
       }
 
-      my.delegateOnVideoThumb(eventOnEl.getElementsByClassName("video-thumb"));
-      my.delegateOnVideoThumb(eventOnEl.getElementsByClassName("yt-uix-simple-thumb-wrap"));
+      my.delegateOnVideoThumb(eventOnEl.getElementsByTagName("ytd-thumbnail"));
 
     },
     /**
@@ -681,22 +642,30 @@
      * @param {Event} evt
      */
     testForNewVideo: function (evt) {
-      var nodeName,
-        el,
-        continueLogic = true;
-      el = evt.target;
-      if (el) {
-        nodeName = el.nodeName.toLowerCase();
-        if (nodeName === "#comment" || nodeName === "#text" || nodeName === "script" ||
-            nodeName === "style" || nodeName === "link" || nodeName === "input" ||
-            nodeName === "iframe") {
-          continueLogic = false;
+      // el ytd-thumbnail & child with class ytd-thumbnail (el as a)
+      let matchedEls = [];
+
+      const el = evt.target;
+      const nodeType = el.nodeType;
+      if (nodeType === Node.ELEMENT_NODE) {
+        matchedEls = el.getElementsByTagName('ytd-thumbnail');
+      }
+
+      const matchedElsLength = matchedEls.length;
+      if (matchedElsLength) {
+
+        my.delegateOnVideoThumb(matchedEls);
+
+        for (let i = 0; i < matchedElsLength; i += 1) {
+          const matchedEl = matchedEls[i];
+          const thumbnailEl = ytVideoPreview.getThumbnailEl(matchedEl);
+          if (thumbnailEl) {
+            ytVideoPreview.observer.observe(thumbnailEl, ytVideoPreview.attrObserverConfig);
+          }
+
         }
-        if (continueLogic) {
-          //console.log(nodeName);
-          my.delegateMouseEvt(el);
-          my.addRatingCssClassToBody();
-        }
+
+        my.addRatingCssClassToBody();
       }
     },
     /**

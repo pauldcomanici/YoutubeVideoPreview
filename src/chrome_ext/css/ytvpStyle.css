@@ -2,14 +2,15 @@
 	display: block;
 }
 .ytVideoPreview-ratingContainer {
+	cursor: help;
 	margin: 0;
 	padding: 0;
 	position: absolute;
-	bottom: 0;
-	top: auto;
+	bottom: auto;
+	top: 0;
 	left: 0;
 	display: none;
-    width: 100%;
+	width: 100%;
 }
 .ytVideoPreview-ratingContainer > div {
 	float: left;
