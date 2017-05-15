@@ -1,7 +1,7 @@
-.ytVideoPreview-ratingActive .ytVideoPreview-ratingContainer {
+.darkyndyVideoPreview-ratingActive .darkyndyVideoPreview-ratingContainer {
 	display: block;
 }
-.ytVideoPreview-ratingContainer {
+.darkyndyVideoPreview-ratingContainer {
 	cursor: help;
 	margin: 0;
 	padding: 0;
@@ -12,56 +12,56 @@
 	display: none;
 	width: 100%;
 }
-.ytVideoPreview-ratingContainer > div {
+.darkyndyVideoPreview-ratingContainer > div {
 	float: left;
 }
-.ytVideoPreview-ratingContainer .ytVideoPreview-ratingLikes {
+.darkyndyVideoPreview-ratingContainer .darkyndyVideoPreview-ratingLikes {
 	background: #1b7fcc;
 }
-.ytVideoPreview-ratingContainer .ytVideoPreview-ratingDislikes {
+.darkyndyVideoPreview-ratingContainer .darkyndyVideoPreview-ratingDislikes {
 	background: #CCC;
 }
 /*rating bar height, by default is 4px*/
-.ytVideoPreview-ratingHeight4, .ytVideoPreview-ratingHeight4 > div {
-    height: 4px;
+.darkyndyVideoPreview-ratingHeight4, .darkyndyVideoPreview-ratingHeight4 > div {
+	height: 4px;
 }
 /*rating bar height, custom classes for perf, 3px*/
-.ytVideoPreview-ratingHeight3, .ytVideoPreview-ratingHeight3 > div {
-    height: 3px;
+.darkyndyVideoPreview-ratingHeight3, .darkyndyVideoPreview-ratingHeight3 > div {
+	height: 3px;
 }
 /*rating bar height, custom classes for perf, 5px*/
-.ytVideoPreview-ratingHeight5, .ytVideoPreview-ratingHeight5 > div {
-    height: 5px;
+.darkyndyVideoPreview-ratingHeight5, .darkyndyVideoPreview-ratingHeight5 > div {
+	height: 5px;
 }
 /*rating bar height, custom classes for perf, 6px*/
-.ytVideoPreview-ratingHeight6, .ytVideoPreview-ratingHeight6 > div {
-    height: 6px;
+.darkyndyVideoPreview-ratingHeight6, .darkyndyVideoPreview-ratingHeight6 > div {
+	height: 6px;
 }
 /*rating bar height, custom classes for perf, 7px*/
-.ytVideoPreview-ratingHeight7, .ytVideoPreview-ratingHeight7 > div {
-    height: 7px;
+.darkyndyVideoPreview-ratingHeight7, .darkyndyVideoPreview-ratingHeight7 > div {
+	height: 7px;
 }
-.yt-thumb-default-370 .ytVideoPreview-ratingContainer {
+.yt-thumb-default-370 .darkyndyVideoPreview-ratingContainer {
 	max-width: 370px;
 	width: 370px;
 }
-.yt-thumb-default-189 .ytVideoPreview-ratingContainer {
+.yt-thumb-default-189 .darkyndyVideoPreview-ratingContainer {
 	max-width: 189px;
 	width: 189px;
 }
-.yt-thumb-default-185 .ytVideoPreview-ratingContainer {
+.yt-thumb-default-185 .darkyndyVideoPreview-ratingContainer {
 	max-width: 185px;
 	width: 185px;
 }
-.yt-thumb-default-106 .ytVideoPreview-ratingContainer {
+.yt-thumb-default-106 .darkyndyVideoPreview-ratingContainer {
 	max-width: 106px;
 	width: 106px;
 }
-.yt-thumb-default-128 .ytVideoPreview-ratingContainer {
+.yt-thumb-default-128 .darkyndyVideoPreview-ratingContainer {
 	max-width: 128px;
 	width: 128px;
 }
-.yt-thumb-default-64 .ytVideoPreview-ratingContainer {
+.yt-thumb-default-64 .darkyndyVideoPreview-ratingContainer {
 	max-width: 64px;
 	width: 64px;
 }

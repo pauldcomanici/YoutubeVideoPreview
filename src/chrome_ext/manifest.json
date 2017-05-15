@@ -14,7 +14,15 @@
   "content_scripts": [
     {
       "css": ["css/ytvpStyle.css"],
-      "js": [ "js/ytConst.js", "js/dyDomHelper.js", "js/ytVideoPreview.js" ],
+      "js": [
+        "js/ytConst.js",
+        "js/dyDomHelper.js",
+        "js/ajax.service.js",
+        "js/dyUtils.js",
+        "js/properties.service.js",
+        "js/videoData.service.js",
+        "js/ytVideoPreview.js"
+      ],
       "matches": [ "http://www.youtube.com/*", "https://www.youtube.com/*" ],
       "run_at": "document_end"
     }
@@ -27,9 +35,9 @@
   },
   "options_page": "site.html",
   "name": "__MSG_extensionName__",
-  "permissions": ["tabs", "storage", "http://www.youtube.com/*", "https://www.youtube.com/*" ],
+  "permissions": ["tabs", "storage", "https://www.youtube.com/*" ],
   "default_locale": "en",
-  "version": "2.2.6",
+  "version": "2.2.8",
   "manifest_version": 2,
   "minimum_chrome_version": "20"
 }
