@@ -7,8 +7,7 @@
  */
 /*jslint browser: true, devel: true */
 (function () {
-  "use strict";
-
+  'use strict';
 
   const ytVideoPreview = {};
 
@@ -35,7 +34,7 @@
     my.delegateOnVideoThumb([el]);
   };
 
-  ytVideoPreview.observer = new MutationObserver(ytVideoPreview.mutationCb);
+  ytVideoPreview.elementAttrObserver = new MutationObserver(ytVideoPreview.mutationCb);
 
   ytVideoPreview.getThumbnailEl = (matchedEl) => {
     let thumbnailEl = null;
@@ -44,6 +43,27 @@
     }
 
     return thumbnailEl;
+  };
+
+  ytVideoPreview.getVideoIdFromLink = (videoLink) => {
+    let videoId = '';
+    if (videoLink && videoLink.length > 0) {
+      const videoIdRegExp = new RegExp('v=' + my.videoIdReg, 'i');
+      if (videoLink.match(videoIdRegExp)) {
+        const videoRegRez = videoIdRegExp.exec(videoLink);
+        videoId = videoRegRez[1];
+      }
+    }
+
+    return videoId;
+  };
+
+  ytVideoPreview.getVideoIdFromLinkElement = (videoEl) => {
+    const videoLink = videoEl.getAttribute('href');
+
+    const videoId = ytVideoPreview.getVideoIdFromLink(videoLink);
+
+    return videoId;
   };
 
   ytVideoPreview.testVideoForRating = (videoEl) => {
@@ -61,41 +81,36 @@
 
     // separation (for multiple conditions)
     if (continueTest) {
-      const videoLink = videoEl.getAttribute("href");
+      const videoId = ytVideoPreview.getVideoIdFromLinkElement(videoEl);
 
-      if (videoLink && videoLink.length > 0) {
-        const videoIdRegExp = new RegExp("v=" + my.videoIdReg, "i");
-        if (videoLink.match(videoIdRegExp)) {
-          const videoRegRez = videoIdRegExp.exec(videoLink);
-          const videoId = videoRegRez[1];
-
-          if (!my.appendRatingObj[videoId]) {
-            my.appendRatingObj[videoId] = {};
-          }
-          my.appendRatingObj[videoId].parentEl = parentEl;
-          my.retrieveVideoDataDebounced();
+      if (videoId) {
+        if (!my.appendRatingObj[videoId]) {
+          my.appendRatingObj[videoId] = {};
         }
+        my.appendRatingObj[videoId].parentEl = parentEl;
+        my.retrieveVideoDataDebounced();
       }
     }
   };
 
+
   /*global setTimeout, DyDomHelper, XMLHttpRequest, chrome, self, PROPR_VIEW_RATING, PROPR_IMAGE_TIME, PROPR_RATING_HEIGHT, PROPR_RATING_LIKE_COLOR, PROPR_RATING_DISLIKE_COLOR */
   var my;
   my = {
-    defaultImg: "default",        //default image name
+    defaultImg: 'default',        //default image name
     defaultImgWidth: 120,         //default image with
-    baseImgPath: "//i.ytimg.com/vi", //base image path
+    baseImgPath: '//i.ytimg.com/vi', //base image path
     maxTestNr: 5,                 //maximum number of test to be executed on element
     hoverTimer: null,             //timer when hovering image
-    hoverVideoId: "",             //video id of hovering image
+    hoverVideoId: '',             //video id of hovering image
     videoImgIdNr: 1,              //unique number that will be added to image id attribute
     videoImgData: {},             //object with video images data
-    videoIdReg: "([a-z0-9-_=]+)", //regular expression for video id
-    ratingAddedCssClass: "",      //css class added to elements that contain video and they have rating
-    knownAddedCssClass: "",       //css class added to elements that are known to have video, only if element was already parsed
-    validVideoCssClass: "YtPreviewValid", //css class added on img element, only for videos for thumbnail preview
+    videoIdReg: '([a-z0-9-_=]+)', //regular expression for video id
+    ratingAddedCssClass: '',      //css class added to elements that contain video and they have rating
+    knownAddedCssClass: '',       //css class added to elements that are known to have video, only if element was already parsed
+    validVideoCssClass: 'YtPreviewValid', //css class added on img element, only for videos for thumbnail preview
     settings: {},                         //settings object for extension
-    usedPrefix: "ytVideoPreview", //prefix used for dataset
+    usedPrefix: 'ytVideoPreview', //prefix used for dataset
     appendRatingObj: {},
     debounce: function (func, wait) {
       var timeout;
@@ -155,22 +170,22 @@
         if (!isNaN(likes) && !isNaN(ratingCount) && ratingCount > 0) {
           if (my.appendRatingObj[videoId].parentEl) {
             //continue only if we have parentEl
-            ratingElCssClass = my.getProprName("-ratingContainer");
-            ratingEl = my.appendRatingObj[videoId].parentEl.querySelector("." + ratingElCssClass);
+            ratingElCssClass = my.getProprName('-ratingContainer');
+            ratingEl = my.appendRatingObj[videoId].parentEl.querySelector('.' + ratingElCssClass);
             if (!ratingEl) {
               //in case rating element was not added
               positiveRatio = likes * 100 / ratingCount;
               positiveRatio = Math.round(positiveRatio * 100) / 100;
               negativeRatio = 100 - positiveRatio;
               negativeRatio = Math.round(negativeRatio * 100) / 100;
-              ratingEl = DyDomHelper.createEl("div",
-                {"class": ratingElCssClass + " " + my.getProprName("-ratingHeight" + my.settings[PROPR_RATING_HEIGHT]) });
+              ratingEl = DyDomHelper.createEl('div',
+                {'class': ratingElCssClass + ' ' + my.getProprName('-ratingHeight' + my.settings[PROPR_RATING_HEIGHT]) });
               ratingElHtml = '<DIV ' +
-                'class="' + my.getProprName("-ratingLikes") + '" ' +
+                'class="' + my.getProprName('-ratingLikes') + '" ' +
                 'title="' + likes + ' likes from ' + ratingCount + ' rating (' + positiveRatio + '%)' + '" ' +
                 'style="width: ' + positiveRatio + '%; background: ' + my.settings[PROPR_RATING_LIKE_COLOR] + ';"></DIV>' +
                 '<DIV ' +
-                'class="' + my.getProprName("-ratingDislikes") + '" ' +
+                'class="' + my.getProprName('-ratingDislikes') + '" ' +
                 'title="dislikes: ' + negativeRatio + '%' + '" ' +
                 'style="width: ' + negativeRatio + '%; background: ' + my.settings[PROPR_RATING_DISLIKE_COLOR] + ';"></DIV>';
               ratingEl.innerHTML = ratingElHtml;
@@ -250,17 +265,17 @@
           }
         };
         try {
-          concatString = "?";
+          concatString = '?';
           if (noCache === true) {
-            reqUrl = reqUrl + "?_dy_no_cache__" + (new Date()).getTime();
-            concatString = "&";
+            reqUrl = reqUrl + '?_dy_no_cache__' + (new Date()).getTime();
+            concatString = '&';
           }
-          if (reqMethod.toUpperCase() === "GET") {
+          if (reqMethod.toUpperCase() === 'GET') {
             reqUrl = reqUrl + concatString + reqData;
             reqData = null;
           }
           xhr.open(reqMethod, reqUrl, aSync);
-          //xhr.setRequestHeader("Content-type", "application/json", true);
+          //xhr.setRequestHeader('Content-type', 'application/json', true);
           try {
             xhr.send(reqData);
           } catch (eS) {
@@ -273,7 +288,7 @@
         }
       } else {
         //cannot execute request
-        console.log("Cannot initialize XHR request");
+        console.log('Cannot initialize XHR request');
       }
     },
     /**
@@ -291,40 +306,14 @@
         //API doesn't support more then 50 id's so make sure to send maximum 50
         do {
           tempVideoIds = videoIds.splice(0, 50);
-          videoIdsString = tempVideoIds.join(",");
-          reqUrl = "https://www.googleapis.com/youtube/v3/videos/";
-          reqData = "part=statistics&id=" + videoIdsString + "&key=AIzaSyAKHgX0wWr82Ko24rnJSBqs8FFvHns21a4";
-          my.doAjaxRequest("GET", reqUrl, reqData, [], my.appendRating);
+          videoIdsString = tempVideoIds.join(',');
+          reqUrl = 'https://www.googleapis.com/youtube/v3/videos/';
+          reqData = 'part=statistics&id=' + videoIdsString + '&key=AIzaSyAKHgX0wWr82Ko24rnJSBqs8FFvHns21a4';
+          my.doAjaxRequest('GET', reqUrl, reqData, [], my.appendRating);
         } while (videoIds.length !== 0);
       }
-      //reqUrl = "http://gdata.youtube.com/feeds/api/videos/" + videoId;
-      //reqData = "v=2&prettyprint=false&alt=jsonc";
-    },
-    /**
-     *
-     * @description Find video id for rating, in case 4 when parent element is DIV
-     * @param {HTMLElement} parentEl
-     */
-    findVideoId: function (parentEl) {
-      var imgEl,
-        imgSrc,
-        initImgRegExp,
-        rezReg,
-        videoId = "";
-      imgEl = parentEl.querySelector("img");
-      if (imgEl) {
-        imgSrc = imgEl.getAttribute("src");
-        if (imgSrc) {
-          initImgRegExp = new RegExp("\\/vi\\/" + my.videoIdReg + "\\/", "i");
-          if (imgSrc.match(initImgRegExp)) {
-            rezReg = initImgRegExp.exec(imgSrc);
-            if (rezReg.length === 2) {
-              videoId = rezReg[1];
-            }
-          }
-        }
-      }
-      return videoId;
+      //reqUrl = 'http://gdata.youtube.com/feeds/api/videos/' + videoId;
+      //reqData = 'v=2&prettyprint=false&alt=jsonc';
     },
     /**
      *
@@ -348,7 +337,7 @@
       }
     },
     getNewImagePath: function (imgData, videoId, imgName) {
-      return my.baseImgPath + imgData.pathData + "/" + videoId + "/" + imgName + imgData.imgExt;
+      return my.baseImgPath + imgData.pathData + '/' + videoId + '/' + imgName + imgData.imgExt;
     },
     /**
      *
@@ -362,7 +351,7 @@
       imgData = my.videoImgData[videoImgElId];
       if (imgData) {
         //only if we have data stored for video
-        imgEl.setAttribute("src", my.getNewImagePath(imgData, videoId, imgData.imgDefault));
+        imgEl.setAttribute('src', my.getNewImagePath(imgData, videoId, imgData.imgDefault));
         imgData.imgIndex = 0;
         window.clearTimeout(my.hoverTimer);
       }
@@ -383,7 +372,7 @@
         window.clearTimeout(my.hoverTimer);
       }
       if (my.hoverVideoId !== videoId) {
-        if (my.hoverVideoId === "") {
+        if (my.hoverVideoId === '') {
           //this means that rotate image was in loop
           my.setDefaultImg(imgEl, videoId, videoImgElId);
         } else {
@@ -402,7 +391,7 @@
           return;
         }
         newImgSrc = my.getNewImagePath(imgData, videoId, imgId);
-        imgEl.setAttribute("src", newImgSrc);
+        imgEl.setAttribute('src', newImgSrc);
         if (!imgData.correctExtension) {
           //start image caching, used for fixing image extension
           imgCached = new Image();
@@ -410,12 +399,12 @@
             imgData.correctExtension = true;
           };
           imgCached.onerror = function () {
-            if (imgData.imgExt === ".jpg") {
-              imgData.imgExt = ".webp";
-              imgData.pathData = "_webp";
-            } else if (imgData.imgExt === ".webp") {
-              imgData.imgExt = ".jpg";
-              imgData.pathData = "";
+            if (imgData.imgExt === '.jpg') {
+              imgData.imgExt = '.webp';
+              imgData.pathData = '_webp';
+            } else if (imgData.imgExt === '.webp') {
+              imgData.imgExt = '.jpg';
+              imgData.pathData = '';
             } else {
               imgData.correctExtension = false;
             }
@@ -441,11 +430,13 @@
         initImgRegExp,       //reg exp to find videoId, for jpg image
         rezReg,
         initImg,
-        regMatch,
         videoId,
         videoImgElId,
         imgData;
-      testNrAttr = my.getProprName("TestNr");
+
+      let regMatch = false;
+
+      testNrAttr = my.getProprName('TestNr');
       testNr = videoImgEl.getAttribute(testNrAttr) || 0;
       testNr = parseInt(testNr, 10);
       if (isNaN(testNr)) {
@@ -455,45 +446,51 @@
       if (my.maxTestNr > testNr) {
         //if we didn't reached maximum number of tests
         videoImgEl.setAttribute(testNrAttr, testNr);
-        initImg = videoImgEl.getAttribute("src");
-        regMatch = false;
-        //default reg exp for a video thumb
-        initImgRegExp = new RegExp("vi(_webp)*\\/" + my.videoIdReg + "\\/([a-z]*)(default)\\.([a-z]+)*", "i");
-        if (initImg.match(initImgRegExp)) {
-          regMatch = true;
+        initImg = videoImgEl.getAttribute('src');
+        if (!initImg) {
+          // get video A element (parent)
+          const videoEl = videoImgEl.parentElement.parentElement;
+          const videoId = ytVideoPreview.getVideoIdFromLinkElement(videoEl);
+          if (videoId) {
+            // if we found videoId on parent, reset test to 0, in the end we will have src for img element
+            testNr = 0;
+          }
         } else {
-          initImg = videoImgEl.getAttribute("data-thumb");
-          if (initImg && initImg.match(initImgRegExp)) {
+          //default reg exp for a video thumb
+          initImgRegExp = new RegExp('vi(_webp)*\\/' + my.videoIdReg + '\\/([a-z]*)(default)\\.([a-z]+)*', 'i');
+          if (initImg.match(initImgRegExp)) {
             regMatch = true;
           }
         }
+
         if (regMatch) {
           rezReg = initImgRegExp.exec(initImg);
           if (rezReg.length === 6) {
             videoId = rezReg[2];
-            if (videoId !== "undefined") {
-              //continue only if videoId is not "undefined"
-              videoImgElId = videoImgEl.getAttribute("id"); //get image element id attribute
+            if (videoId !== 'undefined') {
+              //continue only if videoId is not 'undefined'
+              const attrName = my.getProprName('-id');
+              videoImgElId = videoImgEl.getAttribute(attrName); //get image element ytVideoPreview-id attribute
               if (!videoImgElId) {
                 //if image element doesn't have id attribute then generete and add one
-                videoImgElId = my.getProprName("Id" + my.videoImgIdNr);
+                videoImgElId = my.getProprName('Id' + my.videoImgIdNr);
                 my.videoImgIdNr += 1;
-                videoImgEl.setAttribute("id", videoImgElId);
+                videoImgEl.setAttribute(attrName, videoImgElId);
               }
               //build object with video data
               imgData = {};
               imgData.videoId = videoId;
-              imgData.pathData = rezReg[1] || "";
+              imgData.pathData = rezReg[1] || '';
               imgData.imgIndex = 0;
               imgData.imgDefault = rezReg[3] + rezReg[4];
-              imgData.imgExt = "." + rezReg[5];
+              imgData.imgExt = '.' + rezReg[5];
               my.videoImgData[videoImgElId] = imgData;
-              videoImgEl.setAttribute(my.getProprName("Parsed"), "true");
+              videoImgEl.setAttribute(my.getProprName('Parsed'), 'true');
               my.initVideoSettings(actType, videoImgEl);
             }
           }
         } else {
-          //console.log("no match at reg for: " + initImg + " , testNr: " + testNr);
+          //console.log('no match at reg for: ' + initImg + ' , testNr: ' + testNr);
           //try again image test
           setTimeout(my.testVideoImg, 100, videoImgEl, actType);
         }
@@ -516,20 +513,21 @@
         parsedAttr,
         videoId,
         videoImgElId;
-      parsedAttr = my.getProprName("Parsed");
+      parsedAttr = my.getProprName('Parsed');
       settingsParsed = videoImgEl.getAttribute(parsedAttr);
-      if (settingsParsed && (settingsParsed === "true" || settingsParsed === true)) {
+      if (settingsParsed && (settingsParsed === 'true' || settingsParsed === true)) {
         settingsParsed = true;
       } else {
         settingsParsed = false;
       }
       //console.log(settingsParsed);
       if (settingsParsed === true) {
-        videoImgElId = videoImgEl.getAttribute("id");
+        const attrName = my.getProprName('-id');
+        videoImgElId = videoImgEl.getAttribute(attrName);
         if (videoImgElId) {
           imgData = my.videoImgData[videoImgElId];
           videoId = imgData.videoId;
-          if (actType === "in") {
+          if (actType === 'in') {
             if (my.hoverVideoId !== videoId) {
               //we switched to another video images
               my.hoverVideoId = videoId;
@@ -537,7 +535,7 @@
             }
           } else {
             my.setDefaultImg(videoImgEl, videoId, videoImgElId);
-            my.hoverVideoId = "";
+            my.hoverVideoId = '';
           }
         }
       } else {
@@ -553,8 +551,8 @@
     mouseEnterVideo: function (evt) {
       var videoImgEl;
       //console.log('hover in');
-      videoImgEl = this.querySelector("img");
-      my.initVideoSettings("in", videoImgEl);
+      videoImgEl = this.querySelector('img');
+      my.initVideoSettings('in', videoImgEl);
       my.beforeTestVideoForRating(this);
     },
     /**
@@ -574,8 +572,8 @@
           return;
         }
       }
-      videoImgEl = this.querySelector("img");
-      my.initVideoSettings("out", videoImgEl);
+      videoImgEl = this.querySelector('img');
+      my.initVideoSettings('out', videoImgEl);
       evt.stopPropagation();
     },
     /**
@@ -606,14 +604,16 @@
 
         if (linkVideoEl) {
           wasParsed = DyDomHelper.hasClass(linkVideoEl, my.knownAddedCssClass);
+
           if (!wasParsed) {
-            DyDomHelper.addClass(linkVideoEl, my.knownAddedCssClass);
+            linkVideoEl.classList.add(my.knownAddedCssClass);
+
             if (linkVideoEl.offsetWidth === 0 || linkVideoEl.offsetWidth > 50) {
               //if element has 0 OR at least 50 px in width then continue,
               //there are elements hidden => take them in consideration
               //there are elements that match selector and have 18, 32 or 48 px in width => ignore
-              linkVideoEl.addEventListener("mouseover", my.mouseEnterVideo, false);
-              linkVideoEl.addEventListener("mouseout", my.mouseExitVideo, false);
+              linkVideoEl.addEventListener('mouseover', my.mouseEnterVideo, false);
+              linkVideoEl.addEventListener('mouseout', my.mouseExitVideo, false);
             }
           }
           my.beforeTestVideoForRating(linkVideoEl);
@@ -627,13 +627,13 @@
      */
     delegateMouseEvt: function (eventOnEl) {
       if (!eventOnEl) {
-        eventOnEl = document.getElementById("body-container");
+        eventOnEl = document.getElementById('body-container');
         if (!eventOnEl) {
           eventOnEl = document;
         }
       }
 
-      my.delegateOnVideoThumb(eventOnEl.getElementsByTagName("ytd-thumbnail"));
+      my.delegateOnVideoThumb(eventOnEl.getElementsByTagName('ytd-thumbnail'));
 
     },
     /**
@@ -660,7 +660,7 @@
           const matchedEl = matchedEls[i];
           const thumbnailEl = ytVideoPreview.getThumbnailEl(matchedEl);
           if (thumbnailEl) {
-            ytVideoPreview.observer.observe(thumbnailEl, ytVideoPreview.attrObserverConfig);
+            ytVideoPreview.elementAttrObserver.observe(thumbnailEl, ytVideoPreview.attrObserverConfig);
           }
 
         }
@@ -683,7 +683,7 @@
      */
     parseResponseAtGetSettings: function (response) {
       //console.log(response);
-      if (typeof response === "object") {
+      if (typeof response === 'object') {
         if (response.settings) {
           my.init(response.settings);
         }
@@ -708,15 +708,15 @@
         newValue,
         response,
         message;
-      if (typeof request === "object") {
+      if (typeof request === 'object') {
         if (request.message) {
           message = request.message;
           response = request.response;
-          if (message === "updateSettings") {
+          if (message === 'updateSettings') {
             newValue = response.newValue;
             proprName = response.proprName;
             if (proprName === PROPR_VIEW_RATING) {
-              if (newValue === false || newValue === "false") {
+              if (newValue === false || newValue === 'false') {
                 newValue = false;
               } else {
                 newValue = true;
@@ -725,9 +725,9 @@
               newValue = parseInt(newValue, 10);
             }
             my.settings[proprName] = newValue;
-          } else if (message === "setSettings") {
+          } else if (message === 'setSettings') {
             my.parseResponseAtGetSettings(response);
-          } else if (message === "setStyle") {
+          } else if (message === 'setStyle') {
             my.setExtensionStyle(response.file);
           }
         }
@@ -739,21 +739,21 @@
      */
     delegateForExtension: function () {
       if (window.chrome && chrome.extension) {
-        chrome.extension.sendMessage("showAction");
-        chrome.extension.sendMessage("getSettings");
+        chrome.extension.sendMessage('showAction');
+        chrome.extension.sendMessage('getSettings');
         chrome.extension.onMessage.addListener(my.onRequest);
       } else if (self) {
-        self.postMessage("getStyle");
-        self.postMessage("getSettings");
-        self.on("message", my.onRequest);
+        self.postMessage('getStyle');
+        self.postMessage('getSettings');
+        self.on('message', my.onRequest);
       }
     },
     /**
      * @description Initialize extension properties
      */
     initPropr: function () {
-      my.ratingAddedCssClass = my.getProprName("-ratingActive");
-      my.knownAddedCssClass = my.getProprName("-videoKnown");
+      my.ratingAddedCssClass = my.getProprName('-ratingActive');
+      my.knownAddedCssClass = my.getProprName('-videoKnown');
       my.addRatingCssClassToBody();
     },
     /**
