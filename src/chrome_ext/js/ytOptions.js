@@ -65,7 +65,7 @@
     setupRotateSpeed: function (defaultVal) {
       var inputRangeAttr;
       inputRangeAttr = {
-        "min": 300,
+        "min": 0,
         "max": 5000,
         "step": 100
       };

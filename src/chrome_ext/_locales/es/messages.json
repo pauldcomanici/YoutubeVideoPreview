@@ -46,7 +46,7 @@
     "message": "Rotate speed:"
   },
   "imageTimeDescription": {
-    "message": "milliseconds (1000 milliseconds = 1 second)"
+    "message": "milliseconds (1000 milliseconds = 1 second). Set to 0 to disable previews."
   },
   "ratingHeightLabel": {
     "message": "Rating bar height:"

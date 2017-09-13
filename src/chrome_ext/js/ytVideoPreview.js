@@ -550,53 +550,60 @@
 
   /**
    *
-   * @description Attach mouse event for video thumb
+   * Attach mouse event for video thumb
+   *
    * @param {Array} videoEls
    */
   service.delegateOnVideoThumb = (videoEls) => {
-    var videoElsMaxIndex,
-      videoEl,
-      i,
-      wasParsed;
-    videoElsMaxIndex = videoEls.length - 1;
+    let videoElsMaxIndex;
+    let videoEl;
+    let i;
+    let wasParsed;
+    
+    if (privateData.settings[PROPR_VIEW_RATING] || privateData.settings[PROPR_IMAGE_TIME] > 0) {
+      // if we have preview or rating enabled
+      videoElsMaxIndex = videoEls.length - 1;
 
-    for (i = videoElsMaxIndex; i >= 0; i = i - 1) {
-      videoEl = videoEls[i];
+      for (i = videoElsMaxIndex; i >= 0; i = i - 1) {
+        videoEl = videoEls[i];
 
-      let linkVideoEl;
+        let linkVideoEl;
 
-      if (privateData.newUI) {
-        const videoElNode = videoEl.nodeName;
-        if (videoElNode === 'YTD-THUMBNAIL') {
-          // parent element
-          const thumbnailEl = service.getThumbnailEl(videoEl);
-          if (thumbnailEl) {
-            linkVideoEl = thumbnailEl;
+        if (privateData.newUI) {
+          const videoElNode = videoEl.nodeName;
+          if (videoElNode === 'YTD-THUMBNAIL') {
+            // parent element
+            const thumbnailEl = service.getThumbnailEl(videoEl);
+            if (thumbnailEl) {
+              linkVideoEl = thumbnailEl;
+            }
+          } else if (videoElNode === 'A') {
+            linkVideoEl = videoEl;
           }
-        } else if (videoElNode === 'A') {
+        } else {
+          // old UI
           linkVideoEl = videoEl;
         }
-      } else {
-        // old UI
-        linkVideoEl = videoEl;
-      }
 
-      if (linkVideoEl) {
-        wasParsed = linkVideoEl.classList.contains(privateData.knownAddedCssClass);
+        if (linkVideoEl) {
+          if (privateData.settings[PROPR_IMAGE_TIME] > 0) {
+            wasParsed = linkVideoEl.classList.contains(privateData.knownAddedCssClass);
 
-        if (!wasParsed) {
-          linkVideoEl.classList.add(privateData.knownAddedCssClass);
+            if (!wasParsed) {
+              linkVideoEl.classList.add(privateData.knownAddedCssClass);
 
-          if (linkVideoEl.offsetWidth === 0 || linkVideoEl.offsetWidth > 50) {
-            // if element has 0 OR at least 50 px in width then continue,
-            //  there are elements hidden => take them in consideration
-            //  there are elements that match selector and have 18, 32 or 48 px in width => ignore
-            linkVideoEl.addEventListener('mouseover', service.mouseEnterVideo(linkVideoEl), false);
-            linkVideoEl.addEventListener('mouseout', service.mouseExitVideo(linkVideoEl), false);
+              if (linkVideoEl.offsetWidth === 0 || linkVideoEl.offsetWidth > 50) {
+                // if element has 0 OR at least 50 px in width then continue,
+                //  there are elements hidden => take them in consideration
+                //  there are elements that match selector and have 18, 32 or 48 px in width => ignore
+                linkVideoEl.addEventListener('mouseover', service.mouseEnterVideo(linkVideoEl), false);
+                linkVideoEl.addEventListener('mouseout', service.mouseExitVideo(linkVideoEl), false);
+              }
+            }
           }
+          
+          service.beforeTestVideoForRating(linkVideoEl);
         }
-
-        service.beforeTestVideoForRating(linkVideoEl);
       }
     }
   };

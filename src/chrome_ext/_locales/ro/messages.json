@@ -3,7 +3,7 @@
     "message": "Video Preview"
   },
   "extensionPopupTitle": {
-    "message": "$extensionName$ - setari",
+    "message": "$extensionName$ - setări",
     "placeholders": {
       "extensionName": {
         "content": "Video Preview"
@@ -11,7 +11,7 @@
     }
   },
   "extensionUpdate": {
-    "message": "$extensionName$ a fost updatata",
+    "message": "$extensionName$ a fost updatată",
     "placeholders": {
       "extensionName": {
         "content": "Video Preview"
@@ -19,10 +19,10 @@
     }
   },
   "extensionDescription": {
-    "message": "Tine mousul deasupra unui video si o sa poti vedea mai multe imagini ale videoului"
+    "message": "Tine mousul deasupra unui video si o să poți vedea mai multe imagini ale videoului"
   },
   "loading": {
-    "message": "se incarca ..."
+    "message": "se incarcă ..."
   },
   "yes": {
     "message": "da"
@@ -34,10 +34,10 @@
     "message": "despre"
   },
   "options": {
-    "message": "optiuni"
+    "message": "opțiuni"
   },
   "settings": {
-    "message": "setari"
+    "message": "setări"
   },
   "feedback": {
     "message": "feedback"
@@ -46,10 +46,10 @@
     "message": "Viteza de rotire:"
   },
   "imageTimeDescription": {
-    "message": "milisecunde (1000 milisecunde = 1 secunda)"
+    "message": "milisecunde (1000 milisecunde = 1 secunda). Setați la 0 pentru a dezactiva previzualizările."
   },
   "ratingHeightLabel": {
-    "message": "Inaltimea barei de rating:"
+    "message": "Inălțimea barei de rating:"
   },
   "ratingHeightDescription": {
     "message": "px"
@@ -64,10 +64,10 @@
     "message": "inactiv"
   },
   "optionShowIconFlagLabel": {
-    "message": "Afiseaza iconita:"
+    "message": "Afisează iconita:"
   },
   "optionShowIconFlagDesc": {
-    "message": "seteaza daca doresti sa vezi iconita extensiei in omnibox (bara cu url-ul)"
+    "message": "setează daca doresti să vezi iconita extensiei in omnibox (bara cu url-ul)"
   },
   "optionsHideIconConfirmFlagLabel": {
     "message": "Mesaj de confirmare la ascunderea iconitei:"
@@ -85,24 +85,24 @@
     "message": "<p>$question$</p><br><p>$issue$</p><br><p>$suggestion$</p><br>$contact1$<br>$contact2$",
     "placeholders": {
       "question": {
-        "content": "Ai intrebari?"
+        "content": "Ai intrebări?"
       },
       "issue": {
-        "content": "Ai gasit probleme folosind extensia?"
+        "content": "Ai găsit probleme folosind extensia?"
       },
       "suggestion": {
         "content": "Ai sugestii?"
       },
       "contact1": {
-        "content": "Nu exista sa ma contactezi trimitandu-mi un email <a href=\"mailto:darkyndy@gmail.com\">darkyndy@gmail.com</a>"
+        "content": "Nu ezita sa ma contactezi trimitandu-mi un email <a href=\"mailto:darkyndy@gmail.com\">darkyndy@gmail.com</a>"
       },
       "contact2": {
-        "content": "sau creeaza un issue la: <a href=\"https://github.com/darkyndy/YoutubeVideoPreview/issues\" target=\"_blank\">GitHub VideoPreview issues</a>"
+        "content": "sau creează un issue la: <a href=\"https://github.com/darkyndy/YoutubeVideoPreview/issues\" target=\"_blank\">GitHub VideoPreview issues</a>"
       }
     }
   },
   "siteAboutHeadline": {
-    "message": "Video Preview te ajuta sa decizi daca un video merita a fi vazut inainte sa dai click."
+    "message": "Video Preview te ajută sa decizi dacă un video merită a fi văzut inainte sa dai click."
   },
   "siteAboutWorksHeadline": {
     "message": "Functioneaza:"
@@ -125,10 +125,10 @@
     "message": "<li>$feature1$</li><li>$feature2$</li><li>$feature3$</li><li>$feature4$</li><li>$feature5$</li><li>$feature6$</li><li>$feature7$</li>",
     "placeholders": {
       "feature1": {
-        "content": "Tine mousul deasupra unui video de pe youtube.com si o sa vezi diferite imagini din acel video, asa poti determina daca video merita a fi vazut."
+        "content": "Tine mousul deasupra unui video de pe youtube.com si o sa vezi diferite imagini din acel video, asa poti determina daca video merita a fi văzut."
       },
       "feature2": {
-        "content": "Sub fiecare video o sa vezi bara de rating, asa poti determina daca video merita a fi vazut."
+        "content": "Sub fiecare video o să vezi bara de rating, asa poti determina dacă video merita a fi văzut."
       },
       "feature3": {
         "content": "Optiune de a schimba viteza de schimbare a imaginilor"
@@ -148,7 +148,7 @@
     }
   },
   "siteAboutCode": {
-    "message": "Codul extensiei il poti gasi la: <a href=\"https://github.com/darkyndy/YoutubeVideoPreview/tree/master/src/chrome_ext\" target=\"_blank\">Github</a>:"
+    "message": "Codul extensiei il poti găsi la: <a href=\"https://github.com/darkyndy/YoutubeVideoPreview/tree/master/src/chrome_ext\" target=\"_blank\">Github</a>:"
   },
   "popupOptions": {
     "message": "Optiuni..."
@@ -157,13 +157,13 @@
     "message": "Ascunde iconita"
   },
   "popupAboutHideIcon": {
-    "message": "Video Preview va continua sa functiuneze,numai ca iconita din omnibox va disparea"
+    "message": "Video Preview va continua sa functiuneze, numai că iconita din omnibox va dispărea"
   },
   "popupAreYouSureQuestion": {
     "message": "Esti sigur?"
   },
   "popupHideIconConfirmLabel": {
-    "message": "Nu ma intreba data viitoare"
+    "message": "Nu mă intreba data viitoare"
   },
   "popupHideIconOptionsInfoDesc": {
     "message": "Pentru a afisa iconita dute la:"
