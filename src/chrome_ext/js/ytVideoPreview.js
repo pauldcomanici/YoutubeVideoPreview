@@ -608,6 +608,9 @@
     }
   };
 
+  service.testForElementMutation = (mutations) => {
+    mutations.forEach(service.testForNewVideo)
+  },
   /**
    *
    * @description Test for new video inserted in page
@@ -694,8 +697,17 @@
    * @description Attach events for page
    */
   service.delegateForPage = () => {
-    // TODO: try this with mutation observer
-    document.addEventListener('DOMNodeInserted', service.testForNewVideo, true);
+    // create an observer instance linked to the callback function
+    const observer = new MutationObserver(service.testForElementMutation);
+    // ctart observing the target node for configured mutations
+    observer.observe(
+      document.getElementsByTagName('body')[0],
+      {
+        attributes: false,
+        childList: true,
+        subtree: true,
+      }
+    );
     service.delegateMouseEvt();
   };
   /**
@@ -773,6 +785,8 @@
           service.parseResponseAtGetSettings(response);
         } else if (message === 'setStyle') {
           service.setExtensionStyle(response.file);
+        } else if (message === 'setVideoData') {
+          videoData.appendRating(response);
         }
       }
     }

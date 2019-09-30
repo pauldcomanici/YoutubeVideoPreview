@@ -122,19 +122,47 @@
      * @param {Function} sendResponse
      */
     onRequest: function (request, sender, sendResponse) {
-      var reqMsg,
-        reqCb;
+      let reqMsg;
+      let payload;
+
       if (request) {
         if (typeof request === "string") {
           reqMsg = request;
-          if (reqMsg === "openOptions") {
-            my.openOptions();
-          } else if (reqMsg === "getSettings") {
-            my.callOnGetSettingsPropr("all", my.messageActionPageWithSettings, [sender.tab.id]);
-          } else if (reqMsg === "showAction") {
-            my.callOnGetSettingsPropr(PROPR_SHOW_ICON, my.atRetrieveIconFlag, [sender.tab.id]);
-          }
+        } else if (typeof request === "object") {
+          reqMsg = request.type;
+          payload = request.payload;
         }
+
+        if (reqMsg === 'getVideoData') {
+          const reqUrl = 'https://www.googleapis.com/youtube/v3/videos/';
+          const reqData = `part=statistics&id=${payload}&key=AIzaSyAKHgX0wWr82Ko24rnJSBqs8FFvHns21a4`;
+          ajax.execute('GET', reqUrl, reqData, [sender.tab.id], my.sendVideoData);
+        } else if (reqMsg === "openOptions") {
+          my.openOptions();
+        } else if (reqMsg === "getSettings") {
+          my.callOnGetSettingsPropr("all", my.messageActionPageWithSettings, [sender.tab.id]);
+        } else if (reqMsg === "showAction") {
+          my.callOnGetSettingsPropr(PROPR_SHOW_ICON, my.atRetrieveIconFlag, [sender.tab.id]);
+        }
+      }
+    },
+
+    sendVideoData: function (resp, tabId) {
+      let jsonRes;
+      try {
+        jsonRes = JSON.parse(resp);
+      } catch (e) {
+
+      }
+      if (jsonRes && jsonRes.items) {
+        // send response to the tab from where data was retrieved
+        chrome.tabs.sendMessage(
+          tabId,
+          {
+            message: "setVideoData",
+            response: jsonRes,
+          }
+        );
       }
     },
     /**

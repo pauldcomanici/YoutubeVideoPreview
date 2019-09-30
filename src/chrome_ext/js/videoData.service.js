@@ -81,12 +81,6 @@ const videoData = (() => {
    * @param {Object} resp
    */
   service.appendRating = (resp) => {
-    try {
-      resp = JSON.parse(resp);
-    } catch (ex) {
-      // console.log(ex.message);
-    }
-
     if (resp && resp.items && resp.items.length > 0) {
       // response has video items
       resp.items.forEach((item) => {
@@ -116,13 +110,12 @@ const videoData = (() => {
       do {
         const tempVideoIds = videoIds.splice(0, 50);
         const videoIdsString = tempVideoIds.join(',');
-        const reqUrl = 'https://www.googleapis.com/youtube/v3/videos/';
-        const reqData = `part=statistics&id=${videoIdsString}&key=AIzaSyAKHgX0wWr82Ko24rnJSBqs8FFvHns21a4`;
-        ajax.execute('GET', reqUrl, reqData, [], service.appendRating);
+        chrome.extension.sendMessage({
+          payload: videoIdsString,
+          type: 'getVideoData',
+        });
       } while (videoIds.length !== 0);
     }
-    // reqUrl = 'http://gdata.youtube.com/feeds/api/videos/' + videoId;
-    // reqData = 'v=2&prettyprint=false&alt=jsonc';
   };
 
   service.init = () => {
