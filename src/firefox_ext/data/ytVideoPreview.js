@@ -80,7 +80,7 @@
                             {"class": my.getProprName("-ratingContainer")});
                     ratingElHtml = '<DIV ' +
                         'class="' + my.getProprName("-ratingLikes") + '" ' +
-                        'title="' + likes + ' likes from ' + ratingCount + ' rating (' + positiveRatio + '%)' + '" ' +
+                        'title="' + likes + ' likes from ' + ratingCount + '" ' +
                         'style="width: ' + positiveRatio + '%"></DIV>' +
                         '<DIV ' +
                         'class="' + my.getProprName("-ratingDislikes") + '" ' +

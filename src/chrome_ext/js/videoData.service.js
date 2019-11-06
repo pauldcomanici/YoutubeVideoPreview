@@ -56,7 +56,7 @@ const videoData = (() => {
 
             const ratingElHtml = '<DIV ' +
               'class="' + cssProps.getProprName('ratingLikes') + '" ' +
-              'title="' + likes + ' likes from ' + ratingCount + ' rating (' + positiveRatio + '%)' + '" ' +
+              'title="' + likes + ' likes from ' + ratingCount + '" ' +
               'style="width: ' + positiveRatio + '%; background: ' + privateData.settings[PROPR_RATING_LIKE_COLOR] + ';">' +
               '</DIV>' +
               '<DIV ' +
